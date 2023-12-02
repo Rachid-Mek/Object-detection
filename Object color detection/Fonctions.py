@@ -410,3 +410,65 @@ def detect_contours(binary_mask):
         centroids.append((centroid_x, centroid_y)) # Add the centroid to the list
 
     return centroids
+
+# ____________________________________________________________________________________________________________________________________________________________________________________
+
+def resize_image_2d(image, scale_factor):
+    """Resize a 2D image using a specified scale factor.
+
+    Parameters:
+    -----------
+    - image (array): 2D image to be resized.
+    - scale_factor (float): Scaling factor for resizing the image.
+
+    Returns:
+    --------
+    - array: Resized 2D image.
+
+    Examples:
+    ---------
+    >>> resize_image_2d(np.array([[0, 0, 0], [255, 255, 255]]), 0.1)
+    array([[  0,   0,   0],
+        [255, 255, 255]], dtype=uint8)
+    """
+    height, width = image.shape[:2]
+    new_height = int(height * scale_factor)
+    new_width = int(width * scale_factor)
+    resized_image = np.zeros((new_height, new_width), dtype=np.uint8)
+    
+    for i in range(new_height):
+        for j in range(new_width):
+            resized_image[i, j] = image[int(i / scale_factor), int(j / scale_factor)]
+    
+    return resized_image
+
+def resize_image_3d(image, scale_factor):
+    """Resize a 3D image using a specified scale factor.
+
+    Parameters:
+    -----------
+    - image (array): 3D image to be resized.
+    - scale_factor (float): Scaling factor for resizing the image.
+
+    Returns:
+    --------
+    - array: Resized 3D image.
+
+    Examples:
+    ---------
+    >>> resize_image_3d(np.array([[[0, 0, 0], [255, 255, 255]]]), 0.1)
+    array([[[  0,   0,   0],
+            [255, 255, 255]]], dtype=uint8)
+    """
+    height, width = image.shape[:2]
+    new_height = int(height * scale_factor)
+    new_width = int(width * scale_factor)
+    
+    resized_image = np.zeros((new_height, new_width, image.shape[2]), dtype=np.uint8)
+    
+    for i in range(new_height):
+        for j in range(new_width):
+            for k in range(image.shape[2]):
+                resized_image[i, j, k] = image[int(i / scale_factor), int(j / scale_factor), k]
+    
+    return resized_image

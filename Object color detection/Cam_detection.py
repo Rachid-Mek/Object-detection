@@ -50,7 +50,7 @@ def Launch():
             break 
 
         # Resize the frame to a lower resolution
-        resized_frame = cv2.resize(frame, (0, 0), fx=0.1, fy=0.1)
+        resized_frame = resize_image_3d(frame, 0.1)
 
         img, mask, points = detect_object(resized_frame)
 
@@ -62,7 +62,7 @@ def Launch():
 
         if mask is not None:
             # Resize the mask to its original size
-            original_mask = cv2.resize(mask, (frame.shape[1], frame.shape[0]))
+            original_mask = resize_image_2d(mask, 10)
             cv2.imshow('mask', original_mask*10)
         cv2.imshow('image', frame)
 
