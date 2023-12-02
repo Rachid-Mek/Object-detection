@@ -61,7 +61,9 @@ def Launch():
             
 
         if mask is not None:
-            cv2.imshow('mask', mask)
+            # Resize the mask to its original size
+            original_mask = cv2.resize(mask, (frame.shape[1], frame.shape[0]))
+            cv2.imshow('mask', original_mask*10)
         cv2.imshow('image', frame)
 
         if cv2.waitKey(20) & 0xFF == ord('q'):
