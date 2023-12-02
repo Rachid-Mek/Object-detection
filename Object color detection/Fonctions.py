@@ -1,5 +1,3 @@
-
-
 import numpy as np
 # ----------------------------------------------------------------------------------------------------------------------------
 
@@ -25,7 +23,7 @@ def color_to_hsv_range(color):
     threshold = 10
     # Define lower and upper limits for HSV
     color_lo = np.array([r, g +100, round(b/255) +100])
-    color_hi = np.array([round(b/255) +10 , b, b])
+    color_hi = np.array([round(b/255) +10 , b, b]) 
     return color_lo, color_hi
 # ----------------------------------------------------------------------------------------------------------------------------
 
@@ -188,7 +186,7 @@ def bgr_to_hsv(img):
 
     # Initialize HSV channels
     hue = np.zeros_like(blue, dtype=np.float32) 
-    saturation = np.zeros_like(blue, dtype=np.float32)
+    saturation = np.zeros_like(blue, dtype=np.float32) 
     value = np.zeros_like(blue, dtype=np.float32)
 
     value = maximum_reduce([red, green, blue])   
