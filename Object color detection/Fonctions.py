@@ -1,4 +1,5 @@
 import numpy as np
+import cv2
 # ----------------------------------------------------------------------------------------------------------------------------
 
 def color_to_hsv_range(color):
@@ -410,3 +411,15 @@ def detect_contours(binary_mask):
         centroids.append((centroid_x, centroid_y)) # Add the centroid to the list
 
     return centroids
+
+
+# _____________________________________________________GAME____________________________________________________________________________________________________________________
+car = cv2.imread('Object color detection/Images/car.png', cv2.IMREAD_UNCHANGED)
+
+def move_left(car_pos_x, step=10):
+    car_pos_x -= step
+    return max(car_pos_x, 0)
+
+def move_right(car_pos_x, window_width, step=10):
+    car_pos_x += step
+    return min(car_pos_x, window_width - car.shape[1])
