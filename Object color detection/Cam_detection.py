@@ -34,36 +34,40 @@ def detect_object(img):
 # ----------------------------------------------------------------------------------------------------------------------------
 
 # ---------------------------------------------------------------------------------------------------------------------------- 
-def Launch() :
+def Launch():
     """ Launch the camera and detect the object in the image captured by the camera
     """
-    cap=cv2.VideoCapture(0)
+    cap = cv2.VideoCapture(0)
     if not cap.isOpened():
         print("Erreur de capture ")
         exit(0)
 
     while (cap.isOpened()):
         ret, frame = cap.read()
-        cv2.flip(frame,1,frame) # flip the frame horizontally , 1 : flip the frame vertically , -1 : flip both , 0 : no flip 
-        if not ret :
+        cv2.flip(frame, 1, frame)  # flip the frame horizontally , 1: flip the frame vertically , -1: flip both , 0: no flip 
+        if not ret:
             print("Error in image read ")
             break 
-        img , mask , points = detect_object(frame)
+
+        # Resize the frame to a lower resolution
+        resized_frame = resize_image_3d(frame, 0.1)
+
+        img, mask, points = detect_object(resized_frame)
+
         if(len(points) > 0):
-            print("points :", points[0])
-            cv2.circle(img,(points[0][0],points[0][1]),150,(0,255,0),5)
-            cv2.putText(img, "x: {}, y: {}".format(points[0][0],points[0][1]), (10, img.shape[0] - 10), cv2.FONT_HERSHEY_SIMPLEX, 1.25, (0, 255, 0), 4)
-            cv2.imshow("img" , img)
-            
-        if not mask is None:
-            cv2.imshow("mask" , mask)
-                
+            print("points:", points[0])
+            cv2.circle(frame, (points[0][0] * 10, points[0][1] * 10), 150, (0, 255, 0), 5)
+            cv2.putText(frame, "x: {}, y: {}".format(points[0][0] * 10, points[0][1] * 10), (10, img.shape[0] - 10), cv2.FONT_HERSHEY_SIMPLEX, 1.25, (0, 255, 0), 4)
+        
+        cv2.imshow('image', frame)  # Afficher l'image modifiée avant le masque
+
+        if mask is not None:
+            # Resize the mask to its original size
+            original_mask = resize_image_2d(mask, 10)
+            cv2.imshow('mask', original_mask*10)
+
         if cv2.waitKey(20) & 0xFF == ord('q'):
             break
     # cap.release()
+    cap.release()
     cv2.destroyAllWindows()
-
-# ----------------------------------------------------------------------------------------------------------------------------
-Launch()  # launch the camera and detect the object in the image captured by the camera
-
-#  ----------------------------------------------------------------------------------------------------------------------------
