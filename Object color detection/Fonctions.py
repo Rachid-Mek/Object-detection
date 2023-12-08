@@ -448,6 +448,21 @@ def add_weighted(image1, alpha1, image2, alpha2):
     return result
 
 # ----------------------------------------------------------------------------------------------------------------------------
+<<<<<<< HEAD
+ 
+def find_contours(mask):
+    # Find contours without using cv2
+    contours = []
+    current_contour = []
+    for i in range(mask.shape[0]):
+        for j in range(mask.shape[1]):
+            if mask[i, j] == 255:
+                current_contour.append((i, j))
+    contours.append(np.array(current_contour))
+    return contours
+# ----------------------------------------------------------------------------------------------------------------------------
+ 
+=======
 import cv2
 # _____________________________________________________GAME____________________________________________________________________________________________________________________
 car = cv2.imread('Object color detection/Images/car.png', cv2.IMREAD_UNCHANGED)
@@ -533,3 +548,4 @@ def check_collision(car_pos_x, car_pos_y, car_width, car_height, obstacle_pos_x,
         car_right > obstacle_left and car_left < obstacle_right and
         car_bottom > obstacle_top and car_top < obstacle_bottom
     )
+>>>>>>> 1eb63a89a6eb9e64c6a79d258cf986408a218804
