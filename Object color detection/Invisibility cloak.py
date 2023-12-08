@@ -77,7 +77,7 @@ def Launch_Invisibility_cloak():
         if mask is not None:
             mask = cv2.resize(mask, (0, 0), fx=10, fy=10)
             cv2.imshow('mask', mask)
-        cv2.imshow('image', frame)
+        # cv2.imshow('image', frame)
 
         if cv2.waitKey(20) & 0xFF == ord('q'):
             break
