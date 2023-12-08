@@ -449,6 +449,15 @@ def add_weighted(image1, alpha1, image2, alpha2):
 
 # ----------------------------------------------------------------------------------------------------------------------------
  
-  
+def find_contours(mask):
+    # Find contours without using cv2
+    contours = []
+    current_contour = []
+    for i in range(mask.shape[0]):
+        for j in range(mask.shape[1]):
+            if mask[i, j] == 255:
+                current_contour.append((i, j))
+    contours.append(np.array(current_contour))
+    return contours
 # ----------------------------------------------------------------------------------------------------------------------------
  

@@ -5,32 +5,26 @@ from Fonctions import *
 
  
 # ----------------------------------------------------------------------------------------------------------------------------
-def invisibility_cloak(frame, background, points ,mask):
+ 
+
+
+
+
+
+ 
+# ----------------------------------------------------------------------------------------------------------------------------
+def invisibility_cloak(frame, background, points, mask):
     x, y = int(points[0][0] * 10), int(points[0][1] * 10)
 
     # Extract dimensions of the object from the mask 
     mask = cv2.resize(mask, (0, 0), fx=10, fy=10)
-    object_height, object_width = mask.shape[:2]
-
-    # Ensure the indices are within the valid range
-    y_start = max(0, y - object_height)
-    y_end = min(frame.shape[0], y + object_height)
-    x_start = max(0, x - object_width)
-    x_end = min(frame.shape[1], x + object_width)
-
-    # Get the exact region of interest in the frame
-    frame_region = frame[y_start:y_end, x_start:x_end]
-    background_region = background[y_start:y_end, x_start:x_end]
-
-    result = add_weighted(frame_region, 0.5, background_region, 0.5)
-
-    # Replace the exact region of interest in the frame with the result
-    frame[y_start:y_end, x_start:x_end] = result
-
-    return frame
- 
-# ----------------------------------------------------------------------------------------------------------------------------
- 
+    w,h= mask.shape[:2]    
+    w_frame, h_frame = frame.shape[:2]
+    for i in range(w_frame):
+        for j in range(h_frame):
+            if mask[i,j] == 255:
+                frame[i,j] = background[i ,j]
+    return frame 
 
 # ----------------------------------------------------------------------------------------------------------------------------
 def capture_background():
