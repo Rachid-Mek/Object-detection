@@ -20,18 +20,14 @@ def invisibility_cloak(frame, background, points, mask):
                 # Set the central pixel to the background value
                 frame[i, j] = background[i, j]
 
-                # Update pixels around the central pixel (add 2 pixels)
-                for di in range(-4, 5):
-                    for dj in range(-4, 5):
+                # Update pixels around the central pixel (add 4 pixels)
+                for di in in_range(-4, 5):
+                    for dj in in_range(-4, 5):
                         ni, nj = i + di, j + dj
                         if 0 <= ni < w_frame and 0 <= nj < h_frame and mask[ni, nj] != 255:
                             frame[ni, nj] = background[ni, nj]
 
     return frame
-
-
-
-
  
 # ----------------------------------------------------------------------------------------------------------------------------
 # def invisibility_cloak(frame, background, points, mask):

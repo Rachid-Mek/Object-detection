@@ -71,4 +71,4 @@ def Launch_Object_color_detection():
 
 # ----------------------------------------------------------------------------------------------------------------------------
 
-Launch_Object_color_detection()
+# Launch_Object_color_detection()
