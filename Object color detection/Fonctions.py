@@ -411,8 +411,8 @@ def detect_contours(binary_mask):
     for contour in contours: # Traverse contours
         centroid_x = sum(pixel[1] for pixel in contour) // len(contour) # Compute x-coordinate of the centroid
         centroid_y = sum(pixel[0] for pixel in contour) // len(contour) # Compute y-coordinate of the centroid
-        if abs(centroid_x-centroid_y)>25:
-            centroids.append((centroid_x, centroid_y)) # Add the centroid to the list
+        #if abs(centroid_x-centroid_y)>25:
+        centroids.append((centroid_x, centroid_y)) # Add the centroid to the list
 
     return centroids
 
@@ -448,6 +448,7 @@ def add_weighted(image1, alpha1, image2, alpha2):
     return result
 
 # ----------------------------------------------------------------------------------------------------------------------------
+<<<<<<< HEAD
  
 def find_contours(mask):
     # Find contours without using cv2
@@ -461,3 +462,90 @@ def find_contours(mask):
     return contours
 # ----------------------------------------------------------------------------------------------------------------------------
  
+=======
+import cv2
+# _____________________________________________________GAME____________________________________________________________________________________________________________________
+car = cv2.imread('Object color detection/Images/car.png', cv2.IMREAD_UNCHANGED)
+
+def move_left(car_pos_x, step=10):
+    car_pos_x -= step
+    return max(car_pos_x, 0)
+
+def move_right(car_pos_x, window_width, step=10):
+    car_pos_x += step
+    return min(car_pos_x, window_width - car.shape[1])
+# ____________________________________________________________________________________________________________________________________________________________________________________
+
+def resize_image_2d(image, scale_factor):
+    """Resize a 2D image using a specified scale factor.
+
+    Parameters:
+    -----------
+    - image (array): 2D image to be resized.
+    - scale_factor (float): Scaling factor for resizing the image.
+
+    Returns:
+    --------
+    - array: Resized 2D image.
+
+    Examples:
+    ---------
+    >>> resize_image_2d(np.array([[0, 0, 0], [255, 255, 255]]), 0.1)
+    array([[  0,   0,   0],
+        [255, 255, 255]], dtype=uint8)
+    """
+    height, width = image.shape[:2]
+    new_height = int(height * scale_factor)
+    new_width = int(width * scale_factor)
+    resized_image = np.zeros((new_height, new_width), dtype=np.uint8)
+    
+    for i in range(new_height):
+        for j in range(new_width):
+            resized_image[i, j] = image[int(i / scale_factor), int(j / scale_factor)]
+    
+    return resized_image
+
+def resize_image_3d(image, scale_factor):
+    """Resize a 3D image using a specified scale factor.
+
+    Parameters:
+    -----------
+    - image (array): 3D image to be resized.
+    - scale_factor (float): Scaling factor for resizing the image.
+
+    Returns:
+    --------
+    - array: Resized 3D image.
+
+    Examples:
+    ---------
+    >>> resize_image_3d(np.array([[[0, 0, 0], [255, 255, 255]]]), 0.1)
+    array([[[  0,   0,   0],
+            [255, 255, 255]]], dtype=uint8)
+    """
+    height, width = image.shape[:2]
+    new_height = int(height * scale_factor)
+    new_width = int(width * scale_factor)
+    
+    resized_image = np.zeros((new_height, new_width, image.shape[2]), dtype=np.uint8)
+    
+    for i in range(new_height):
+        for j in range(new_width):
+            for k in range(image.shape[2]):
+                resized_image[i, j, k] = image[int(i / scale_factor), int(j / scale_factor), k]
+    
+    return resized_image
+
+def check_collision(car_pos_x, car_pos_y, car_width, car_height, obstacle_pos_x, obstacle_pos_y, obstacle_width, obstacle_height):
+    # Coordonnées de la voiture et de l'obstacle
+    car_left, car_right, car_top, car_bottom = car_pos_x, car_pos_x + car_width, car_pos_y, car_pos_y + car_height
+    obstacle_left, obstacle_right, obstacle_top, obstacle_bottom = (
+        obstacle_pos_x, obstacle_pos_x + obstacle_width, obstacle_pos_y, obstacle_pos_y + obstacle_height
+    )
+
+    # Vérifier la collision
+    return (
+        car_right > obstacle_left and car_left < obstacle_right and
+        car_bottom > obstacle_top and car_top < obstacle_bottom
+    )
+>>>>>>> 1eb63a89a6eb9e64c6a79d258cf986408a218804
