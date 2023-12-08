@@ -27,21 +27,21 @@ def object_color_detection(img , color) :
             pixel = hsv[i, j] # Get pixel color
             if check_color(pixel , color_lo , color_hi): # Check condition 
                 mask[i, j] = True # Set pixel to True if condition is satisfied
-
+    img_org = img.copy()  # Make a copy of the original image
     # Change image to black where we found the color
     img[mask] = 0  # Set black color
-
+    img_org[~mask] = 255
     # The rest to white
     img[~mask] = 255 # Set white color 
-    return img
+    return img , img_org
 
 # ----------------------------------------------------------------------------------------------------------------------------
 # Load image
-img = cv2.imread('Object color detection/Images/red-sedan-car.jpg' , cv2.IMREAD_COLOR)
-color = [0 , 0 , 255] # red color
-img = object_color_detection(img ,color)
-# Show image
-cv2.imshow('image', img)
-cv2.waitKey(0)
-cv2.destroyAllWindows()
+# img = cv2.imread('Object color detection/Images/red-sedan-car.jpg' , cv2.IMREAD_COLOR)
+# color = [0 , 0 , 255] # red color
+# img = object_color_detection(img ,color)
+# # Show image
+# cv2.imshow('image', img)
+# cv2.waitKey(0)
+# cv2.destroyAllWindows()
 # ----------------------------------------------------------------------------------------------------------------------------
