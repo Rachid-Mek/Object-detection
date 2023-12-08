@@ -411,8 +411,8 @@ def detect_contours(binary_mask):
     for contour in contours: # Traverse contours
         centroid_x = sum(pixel[1] for pixel in contour) // len(contour) # Compute x-coordinate of the centroid
         centroid_y = sum(pixel[0] for pixel in contour) // len(contour) # Compute y-coordinate of the centroid
-        if abs(centroid_x-centroid_y)>25:
-            centroids.append((centroid_x, centroid_y)) # Add the centroid to the list
+        #if abs(centroid_x-centroid_y)>25:
+        centroids.append((centroid_x, centroid_y)) # Add the centroid to the list
 
     return centroids
 
