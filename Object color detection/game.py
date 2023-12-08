@@ -5,6 +5,7 @@ from Cam_detection import *
 
 
 def game():
+    vitesse = 300
     cap = cv2.VideoCapture(0)
     if not cap.isOpened():
         print("Erreur de capture")
@@ -37,6 +38,7 @@ def game():
 
     while True:
         ret, frame = cap.read()
+        cv2.flip(frame,1,frame)
         if not ret:
             print("Error in image read")
             break
@@ -47,7 +49,7 @@ def game():
         obj_info = detect_object(resized_frame)
 
         # Display the camera window with circles and points
-        if obj_info:
+        if obj_info and len(obj_info[2]) > 0:
             _, _, obj_coords = obj_info
             cv2.circle(frame, (int(obj_coords[0][0] * 10), int(obj_coords[0][1] * 10)), 20, (0, 255, 0), 5)
             cv2.putText(frame, "x: {}, y: {}".format(int(obj_coords[0][0] * 10), int(obj_coords[0][1] * 10)),
@@ -56,13 +58,15 @@ def game():
         cv2.imshow('Camera', frame)
 
         # Continue with the game window
-        if obj_info:
+        if obj_info and len(obj_info[2]) > 0:
             blurred_img, _, obj_coords = obj_info
 
             fenetre = contour.copy()
 
             # Dessiner la voiture sur la fenêtre avec la transparence correcte
             for c in in_range(3):
+                car_pos_x = max(0, min(car_pos_x, fenetre.shape[1] - car.shape[1]))
+
                 # Check if the car exceeds the left boundary
                 left_boundary = max(car_pos_x, 0)
                 # Check if the car exceeds the right boundary
@@ -74,7 +78,7 @@ def game():
                     fenetre[car_pos_y:car_pos_y + car.shape[0], left_boundary:right_boundary, c] *
                     (1.0 - alpha_channel / 255.0)
                 ).astype(np.uint8)
-
+            
             # Dessiner l'obstacle (rectangle rouge)
             fenetre[obstacle_pos_y:obstacle_pos_y + 40, obstacle_pos_x:obstacle_pos_x + 30] = [0, 0, 255]  # rouge
             fenetre[obstacle_pos_y2:obstacle_pos_y2 + 40, obstacle_pos_x2:obstacle_pos_x2 + 30] = [0, 0, 255]  # rouge
@@ -94,11 +98,7 @@ def game():
 
             # Déplacer la voiture en fonction des coordonnées de l'objet
             obj_center_x = obj_coords[0][0]
-
-            # Calculer et ajuster la position de la voiture en fonction des coordonnées de l'objet
-            speed = obj_center_x - prev_obj_center_x
-            car_pos_x += (speed * 3)
-            prev_obj_center_x = obj_center_x
+            print(obj_center_x)
 
             # Vérifier la collision avec les obstacles
             collision1 = check_collision(car_pos_x, car_pos_y, car.shape[1], car.shape[0],
@@ -114,11 +114,19 @@ def game():
                 cv2.waitKey(2500)  # Attendre 2.5 secondes
                 break
 
+            # Detect if there are any objects
             if len(obj_coords) > 0:
                 point = tuple(map(int, obj_coords[0]))  # Convert to tuple of integers
                 cv2.circle(frame, (point[0] * 10, point[1] * 10), 150, (0, 255, 0), 5)
-                cv2.putText(frame, "x: {}, y: {}".format(point[0] * 10, point[1] * 10), (10, frame.shape[0] - 10), cv2.FONT_HERSHEY_SIMPLEX, 1.25, (0, 255, 0), 4)
-
+                cv2.putText(frame, "x: {}, y: {}".format(point[0] * 10, point[1] * 10),
+                            (10, frame.shape[0] - 10), cv2.FONT_HERSHEY_SIMPLEX, 1.25, (0, 255, 0), 4)
+          
+            if 0 <= obj_center_x * 10 <= 170:
+                # Move to the left
+                car_pos_x -= 10
+            elif obj_center_x * 10 > 420:
+                # Move to the right
+                car_pos_x += 10
             # Afficher la fenêtre de jeu
             cv2.imshow('Racing Game', fenetre)
 
