@@ -1,5 +1,4 @@
 import numpy as np
-import cv2
 # ----------------------------------------------------------------------------------------------------------------------------
 
 def color_to_hsv_range(color):
@@ -259,6 +258,8 @@ def pad_image(image, pad):
 
     return padded_image
 # ----------------------------------------------------------------------------------------------------------------------------
+ 
+# ----------------------------------------------------------------------------------------------------------------------------
 def Apply_blur(image, kernel_size):
     """Applies a blur filter to an image.
 
@@ -286,7 +287,8 @@ def Apply_blur(image, kernel_size):
     kernel /= (kernel_size * kernel_size)
 
     # Pad the image to handle border pixels
-    padded_image = np.pad(image, ((pad, pad), (pad, pad), (0, 0)), mode='constant')
+    # padded_image = np.pad(image, ((pad, pad), (pad, pad), (0, 0)), mode='constant')
+    padded_image=pad_image(image,pad)
 
     # Apply the blur filter
     for i in in_range(pad, height + pad): # Traverse rows
@@ -401,6 +403,7 @@ def detect_contours(binary_mask):
                         if 0 <= x < height and 0 <= y < width and binary_mask[x, y] == 255 and (x, y) not in visited: # Check if the neighbor is white and not visited
                             stack.append((x, y))
 
+
                 contours.append(contour)  # Add detected contour to the list
 
     # Compute centroids for each contour
@@ -408,92 +411,50 @@ def detect_contours(binary_mask):
     for contour in contours: # Traverse contours
         centroid_x = sum(pixel[1] for pixel in contour) // len(contour) # Compute x-coordinate of the centroid
         centroid_y = sum(pixel[0] for pixel in contour) // len(contour) # Compute y-coordinate of the centroid
-        centroids.append((centroid_x, centroid_y)) # Add the centroid to the list
+        if abs(centroid_x-centroid_y)>25:
+            centroids.append((centroid_x, centroid_y)) # Add the centroid to the list
 
     return centroids
 
-
-# _____________________________________________________GAME____________________________________________________________________________________________________________________
-car = cv2.imread('Object color detection/Images/car.png', cv2.IMREAD_UNCHANGED)
-
-def move_left(car_pos_x, step=10):
-    car_pos_x -= step
-    return max(car_pos_x, 0)
-
-def move_right(car_pos_x, window_width, step=10):
-    car_pos_x += step
-    return min(car_pos_x, window_width - car.shape[1])
-# ____________________________________________________________________________________________________________________________________________________________________________________
-
-def resize_image_2d(image, scale_factor):
-    """Resize a 2D image using a specified scale factor.
-
+ 
+# ----------------------------------------------------------------------------------------------------------------------------
+def add_weighted(image1, alpha1, image2, alpha2):
+    """
+    Perform weighted addition of two images: output = alpha1 * image1 + alpha2 * image2 
+    
     Parameters:
     -----------
-    - image (array): 2D image to be resized.
-    - scale_factor (float): Scaling factor for resizing the image.
+    - image1 (array): First image to add.
+    - alpha1 (float): Weight of the first image.
+    - image2 (array): Second image to add.
+    - alpha2 (float): Weight of the second image.
 
     Returns:
     --------
-    - array: Resized 2D image.
-
-    Examples:
-    ---------
-    >>> resize_image_2d(np.array([[0, 0, 0], [255, 255, 255]]), 0.1)
-    array([[  0,   0,   0],
-        [255, 255, 255]], dtype=uint8)
+    - array: Weighted addition of the two images.
     """
-    height, width = image.shape[:2]
-    new_height = int(height * scale_factor)
-    new_width = int(width * scale_factor)
-    resized_image = np.zeros((new_height, new_width), dtype=np.uint8)
-    
-    for i in range(new_height):
-        for j in range(new_width):
-            resized_image[i, j] = image[int(i / scale_factor), int(j / scale_factor)]
-    
-    return resized_image
+    if image1.shape != image2.shape:
+        raise ValueError("Input images must have the same shape")
 
-def resize_image_3d(image, scale_factor):
-    """Resize a 3D image using a specified scale factor.
+    result = np.empty_like(image1, dtype=np.float32)
+    result[:, :, 0] = alpha1 * image1[:, :, 0] + alpha2 * image2[:, :, 0]  # Add the first channel
+    result[:, :, 1] = alpha1 * image1[:, :, 1] + alpha2 * image2[:, :, 1]   # Add the second channel
+    result[:, :, 2] = alpha1 * image1[:, :, 2] + alpha2 * image2[:, :, 2]   # Add the third channel
 
-    Parameters:
-    -----------
-    - image (array): 3D image to be resized.
-    - scale_factor (float): Scaling factor for resizing the image.
+    # result = np.clip(result, 0, 255).astype(np.uint8) 
+    clipped_result = [max(0, min(pixel, 255)) for pixel in result]
 
-    Returns:
-    --------
-    - array: Resized 3D image.
+    # Convert to unsigned 8-bit integers
+    result = list(map(int, clipped_result))
+    # for i in in_range(result.shape[0]):
+    #     for j in in_range(result.shape[1]):
+    #         for channel in in_range(result.shape[2]):
+    #             result[i, j, channel] = max(0, min(result[i, j, channel], 255))
 
-    Examples:
-    ---------
-    >>> resize_image_3d(np.array([[[0, 0, 0], [255, 255, 255]]]), 0.1)
-    array([[[  0,   0,   0],
-            [255, 255, 255]]], dtype=uint8)
-    """
-    height, width = image.shape[:2]
-    new_height = int(height * scale_factor)
-    new_width = int(width * scale_factor)
-    
-    resized_image = np.zeros((new_height, new_width, image.shape[2]), dtype=np.uint8)
-    
-    for i in range(new_height):
-        for j in range(new_width):
-            for k in range(image.shape[2]):
-                resized_image[i, j, k] = image[int(i / scale_factor), int(j / scale_factor), k]
-    
-    return resized_image
+    return result
 
-def check_collision(car_pos_x, car_pos_y, car_width, car_height, obstacle_pos_x, obstacle_pos_y, obstacle_width, obstacle_height):
-    # Coordonnées de la voiture et de l'obstacle
-    car_left, car_right, car_top, car_bottom = car_pos_x, car_pos_x + car_width, car_pos_y, car_pos_y + car_height
-    obstacle_left, obstacle_right, obstacle_top, obstacle_bottom = (
-        obstacle_pos_x, obstacle_pos_x + obstacle_width, obstacle_pos_y, obstacle_pos_y + obstacle_height
-    )
-
-    # Vérifier la collision
-    return (
-        car_right > obstacle_left and car_left < obstacle_right and
-        car_bottom > obstacle_top and car_top < obstacle_bottom
-    )
+# ----------------------------------------------------------------------------------------------------------------------------
+ 
+  
+# ----------------------------------------------------------------------------------------------------------------------------
+ 
