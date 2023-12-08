@@ -441,15 +441,9 @@ def add_weighted(image1, alpha1, image2, alpha2):
     result[:, :, 1] = alpha1 * image1[:, :, 1] + alpha2 * image2[:, :, 1]   # Add the second channel
     result[:, :, 2] = alpha1 * image1[:, :, 2] + alpha2 * image2[:, :, 2]   # Add the third channel
 
-    # result = np.clip(result, 0, 255).astype(np.uint8) 
-    clipped_result = [max(0, min(pixel, 255)) for pixel in result]
-
-    # Convert to unsigned 8-bit integers
-    result = list(map(int, clipped_result))
-    # for i in in_range(result.shape[0]):
-    #     for j in in_range(result.shape[1]):
-    #         for channel in in_range(result.shape[2]):
-    #             result[i, j, channel] = max(0, min(result[i, j, channel], 255))
+    result = np.clip(result, 0, 255).astype(np.uint8) 
+    
+    
 
     return result
 

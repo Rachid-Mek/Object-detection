@@ -78,6 +78,6 @@ def Launch():
     cv2.destroyAllWindows()
 
 # ----------------------------------------------------------------------------------------------------------------------------
-Launch()  # launch the camera and detect the object in the image captured by the camera
+# Launch()  # launch the camera and detect the object in the image captured by the camera
 
 #  ----------------------------------------------------------------------------------------------------------------------------
