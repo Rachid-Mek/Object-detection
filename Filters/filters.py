@@ -3,11 +3,13 @@ import numpy as np
 
 #--TrackBar functions------------------------------------------------------------------------------------------------------------------------------------------------------
 
+# for all filters
 def changeTh(value):
     global th
     th = value
     filter()
     
+# for all filters    
 def changeType(x):
     global type
     type = x
@@ -17,79 +19,99 @@ def changeFilter(value):
     global method
     method = label_values[value]
     filter()
-
+    
+    
+ #for dilate erode morphex
+ # struct rect and cross
 def changeStructure(value):
     global structure
     structure = struct_values[value]
     filter()
-    
+  
+# for morphex  
+# open and close
 def changeMorphType(value):
     global morph_type
     morph_type = morph_values[value]
     filter()
-    
+
+# for erode   
 def change_erode_size(x):
     global sizeErode
     sizeErode = x 
     filter()
-    
+
+# for dilate
 def change_dilate_size(x):
     global sizeDilate
     sizeDilate = x 
     filter()
-
+# for morphex
 def change_morphEx_size(x):
     global sizeMorphEx
     sizeMorphEx = x 
     filter()
 #--Filter Functions TP5------------------------------------------------------------------------------------------------------------------------------------------------------
 
-def treshholding():
+def thresholding():
+    # Initialize the loop variable for the row index
     i = 0
+    # Iterate over the rows of the image
     while i < height:
+        # Initialize the loop variable for the column index
         j = 0
+        # Iterate over the columns of the image
         while j < width:
-            if type == 0: #THRESH_BINARY
+            # Check the thresholding type and apply the corresponding method
+            if type == 0:  # THRESH_BINARY
                 imgRes_l[i][j] = 255 if imgRes_l[i][j] > th else 0
-                j += 1
-            if type == 1: #THRESH_BINARY_INV
+            elif type == 1:  # THRESH_BINARY_INV
                 imgRes_l[i][j] = 0 if imgRes_l[i][j] > th else 255
-                j += 1
-            if type == 2: #THRESH_TRUNC
+            elif type == 2:  # THRESH_TRUNC
                 imgRes_l[i][j] = th if imgRes_l[i][j] > th else imgRes_l[i][j]
-                j += 1
-            if type == 3: #THRESH_TOZERO
+            elif type == 3:  # THRESH_TOZERO
                 imgRes_l[i][j] = imgRes_l[i][j] if imgRes_l[i][j] > th else 0
-                j += 1
-            if type == 4: #THRESH_TOZERO_INV
+            elif type == 4:  # THRESH_TOZERO_INV
                 imgRes_l[i][j] = 0 if imgRes_l[i][j] > th else imgRes_l[i][j]
-                j += 1
+            
+            # Move to the next column
+            j += 1
+        # Move to the next row
         i += 1
+
         
 def filter2D(kernel):
-        i = 0
-        while i < height:
-            j = 0
-            while j < width:
-                i_index = min(max(i,1), height-2)
-                j_index = min(max(j,1), width-2)
+    # Initialize the loop variable for the row index
+    i = 0
+    # Iterate over the rows of the image
+    while i < height:
+        # Initialize the loop variable for the column index
+        j = 0
+        # Iterate over the columns of the image
+        while j < width:
+            # Handle boundary conditions by replicating edge pixels
+            i_index = min(max(i, 1), height - 2)
+            j_index = min(max(j, 1), width - 2)
 
-                pixel_value = (
-                    img[i_index][j_index] * kernel[1][1] #center
-                    + img[i_index - 1][j_index] * kernel[0][1] #left
-                    + img[i_index + 1][j_index] * kernel[2][1] #right
-                    
-                    + img[i_index][j_index - 1] * kernel[1][0] # up
-                    + img[i_index][j_index + 1] * kernel[1][2] #down
-                    
-                    + img[i_index - 1][j_index - 1] * kernel[0][0] #upper left
-                    + img[i_index - 1][j_index + 1] * kernel[0][2] #lower left
-                    + img[i_index + 1][j_index - 1] * kernel[2][0] #upper ri_indexght
-                    + img[i_index + 1][j_index + 1] * kernel[2][2] #lower right
-                )
-                imgRes_l[i][j] = pixel_value
-                j += 1
-            i += 1
+            # Perform 2D convolution using the provided kernel
+            pixel_value = (
+                img[i_index][j_index] * kernel[1][1] +  # Center
+                img[i_index - 1][j_index] * kernel[0][1] +  # Left
+                img[i_index + 1][j_index] * kernel[2][1] +  # Right
+                img[i_index][j_index - 1] * kernel[1][0] +  # Up
+                img[i_index][j_index + 1] * kernel[1][2] +  # Down
+                img[i_index - 1][j_index - 1] * kernel[0][0] +  # Upper Left
+                img[i_index - 1][j_index + 1] * kernel[0][2] +  # Lower Left
+                img[i_index + 1][j_index - 1] * kernel[2][0] +  # Upper Right
+                img[i_index + 1][j_index + 1] * kernel[2][2]    # Lower Right
+            )
+            # Update the result image with the computed pixel value
+            imgRes_l[i][j] = pixel_value
+            # Move to the next column
+            j += 1
+        # Move to the next row
+        i += 1
+
             
 #--Filter Functions TP9------------------------------------------------------------------------------------------------------------------------------------------------------
 #~~~Erode~~~~~~~~~~~~~~~~~~~~
@@ -97,124 +119,175 @@ def filter2D(kernel):
 d’un pixel)"""
 
 def erode_cross(sizeErode):
-    kernel = np.zeros((sizeErode*2+1, sizeErode*2+1), dtype=np.uint8)
-    mid = sizeErode
-    kernel[mid, :] = 1  # Horizontal line
-    kernel[:, mid] = 1  # Vertical line
-    print('cross')
-    print(kernel)
     
+
+    # Initialize the loop variables
     i = 0
+    # Iterate over the rows of the image
     while i < height:
+        # Initialize the inner loop variable
         j = 0
+        # Iterate over the columns of the image
         while j < width:
             # Handle boundary conditions by replicating edge pixels
             i_index = min(max(i, sizeErode), height - sizeErode - 1)
             j_index = min(max(j, sizeErode), width - sizeErode - 1)
 
             # Perform logical AND operation between neighboring pixels based on the kernel
-            upper_line = img[i_index - sizeErode, j_index - sizeErode:j_index + sizeErode + 1]
-            lower_line = img[i_index + sizeErode, j_index - sizeErode:j_index + sizeErode + 1]
-            left_line = img[i_index - sizeErode:i_index + sizeErode + 1, j_index - sizeErode]
-            right_line = img[i_index - sizeErode:i_index + sizeErode + 1, j_index + sizeErode]
+            pixel_values = []
+            m = -sizeErode
+            # Iterate over the elements of the horizontal and vertical lines in the kernel
+            while m <= sizeErode:
+                # Collect pixel values along the horizontal line
+                pixel_values.append(img[i_index + m, j_index])
+                # Collect pixel values along the vertical line
+                pixel_values.append(img[i_index, j_index + m])
+                m += 1
 
-            pixel_value = (
-                np.min(np.concatenate((upper_line, lower_line, left_line, right_line)))
-            )
+            # Find the minimum pixel value among the collected values
+            pixel_value = np.min(np.array(pixel_values))
+            # Update the result image with the minimum pixel value
             imgRes_l[i][j] = pixel_value
+            # Move to the next column
             j += 1
+        # Move to the next row
         i += 1
 
         
 def erode_rect(sizeErode):
-    kernel = np.ones((sizeErode*2+1, sizeErode*2+1), dtype=np.uint8)
-    print('rect')
-    print(kernel)
-    
+    # Initialize the loop variable for the row index
     i = 0
+    # Iterate over the rows of the image
     while i < height:
+        # Initialize the loop variable for the column index
         j = 0
+        # Iterate over the columns of the image
         while j < width:
             # Handle boundary conditions by replicating edge pixels
             i_index = min(max(i, sizeErode), height - sizeErode - 1)
             j_index = min(max(j, sizeErode), width - sizeErode - 1)
 
             # Perform logical AND operation between neighboring pixels based on the kernel
-            pixel_value = (
-                (img[i_index - sizeErode:i_index + sizeErode + 1, j_index - sizeErode:j_index + sizeErode + 1] * kernel).min()
-            )
+            pixel_values = []
+            m = -sizeErode
+            # Iterate over the elements of the square kernel
+            while m <= sizeErode:
+                n = -sizeErode
+                while n <= sizeErode:
+                    # Collect pixel values within the square region of the kernel
+                    pixel_values.append(img[i_index + m, j_index + n])
+                    n += 1
+                m += 1
+
+            # Find the minimum pixel value among the collected values
+            pixel_value = min(pixel_values)
+            # Update the result image with the minimum pixel value
             imgRes_l[i][j] = pixel_value
+            # Move to the next column
             j += 1
+        # Move to the next row
         i += 1
+
 
 #~~~Dilate~~~~~~~~~~~~~~~~~~~~
 """Dilatation: effectue un « ou » logique entre les voisins d’un pixel (augmente l’épaisseur d’un
 contour) """
 def dilate_cross(sizeDilate):
-    kernel = np.zeros((sizeDilate*2+1, sizeDilate*2+1), dtype=np.uint8)
-    mid = sizeDilate
-    kernel[mid, :] = 1  # Horizontal line
-    kernel[:, mid] = 1  # Vertical line
-    print('cross')
-    print(kernel)
-    
+    # Initialize the loop variable for the row index
     i = 0
+    # Iterate over the rows of the image
     while i < height:
+        # Initialize the loop variable for the column index
         j = 0
+        # Iterate over the columns of the image
         while j < width:
             # Handle boundary conditions by replicating edge pixels
             i_index = min(max(i, sizeDilate), height - sizeDilate - 1)
             j_index = min(max(j, sizeDilate), width - sizeDilate - 1)
 
             # Perform logical OR operation between neighboring pixels based on the kernel
-            upper_line = img[i_index - sizeDilate, j_index - sizeDilate:j_index + sizeDilate + 1]
-            lower_line = img[i_index + sizeDilate, j_index - sizeDilate:j_index + sizeDilate + 1]
-            left_line = img[i_index - sizeDilate:i_index + sizeDilate + 1, j_index - sizeDilate]
-            right_line = img[i_index - sizeDilate:i_index + sizeDilate + 1, j_index + sizeDilate]
+            pixel_values = []
+            m = -sizeDilate
+            # Iterate over the elements of the horizontal and vertical lines in the kernel
+            while m <= sizeDilate:
+                # Collect pixel values along the horizontal line
+                pixel_values.append(img[i_index + m, j_index])
+                # Collect pixel values along the vertical line
+                pixel_values.append(img[i_index, j_index + m])
+                m += 1
 
-            pixel_value = (
-                np.max(np.concatenate((upper_line, lower_line, left_line, right_line)))
-            )
+            # Find the maximum pixel value among the collected values
+            pixel_value = np.max(np.array(pixel_values))
+            # Update the result image with the maximum pixel value
             imgRes_l[i][j] = pixel_value
+            # Move to the next column
             j += 1
+        # Move to the next row
         i += 1
+
 
         
 def dilate_rect(sizeDilate):
-    kernel = np.ones((sizeDilate*2+1, sizeDilate*2+1), dtype=np.uint8)
-    print('rect')
-    print(kernel)
-    
+    # Initialize the loop variable for the row index
     i = 0
+    # Iterate over the rows of the image
     while i < height:
+        # Initialize the loop variable for the column index
         j = 0
+        # Iterate over the columns of the image
         while j < width:
             # Handle boundary conditions by replicating edge pixels
             i_index = min(max(i, sizeDilate), height - sizeDilate - 1)
             j_index = min(max(j, sizeDilate), width - sizeDilate - 1)
 
             # Perform logical OR operation between neighboring pixels based on the kernel
-            pixel_value = (
-                (img[i_index - sizeDilate:i_index + sizeDilate + 1, j_index - sizeDilate:j_index + sizeDilate + 1] * kernel).max()
-            )
+            pixel_values = []
+            m = -sizeDilate
+            # Iterate over the elements of the square kernel
+            while m <= sizeDilate:
+                n = -sizeDilate
+                while n <= sizeDilate:
+                    # Collect pixel values within the square region of the kernel
+                    pixel_values.append(img[i_index + m, j_index + n])
+                    n += 1
+                m += 1
+
+            # Find the maximum pixel value among the collected values
+            pixel_value = max(pixel_values)
+            # Update the result image with the maximum pixel value
             imgRes_l[i][j] = pixel_value
+            # Move to the next column
             j += 1
+        # Move to the next row
         i += 1
+
 
 #~~~MorphEx~~~~~~~~~~~~~~~~~~~~
 
 def morph_rect_open():
+    # Apply erosion using a rectangular structuring element
     erode_rect(sizeMorphEx)
+    # Apply dilation using a rectangular structuring element
     dilate_rect(sizeMorphEx)
+
 def morph_cross_open():
+    # Apply erosion using a cross-shaped structuring element
     erode_cross(sizeMorphEx)
+    # Apply dilation using a cross-shaped structuring element
     dilate_cross(sizeMorphEx)
+
 def morph_rect_closed():
+    # Apply dilation using a rectangular structuring element
     dilate_rect(sizeMorphEx)
+    # Apply erosion using a rectangular structuring element
     erode_rect(sizeMorphEx)
+
 def morph_cross_closed():
+    # Apply dilation using a cross-shaped structuring element
     dilate_cross(sizeMorphEx)
+    # Apply erosion using a cross-shaped structuring element
     erode_cross(sizeMorphEx)
+
        
 
 
@@ -225,7 +298,8 @@ def filter():
     # Initialize imgRes_l
     rows, cols = img.shape
     imgRes_l = np.zeros((rows, cols), dtype=np.uint8)
-    if method == 'laplacien':
+    
+    if method == 'laplacien': 
         # Filtre Laplacian
         kernel = [[0, -1, 0], [-1, 4, -1], [0, -1, 0]]
         filter2D(kernel)
@@ -268,10 +342,10 @@ def filter():
 
 # Initialize global variables
 th = 130
-type = 0
-sizeDilate = 0
-sizeErode = 0
-sizeMorphEx = 0
+type = 2
+sizeDilate = 1
+sizeErode = 1
+sizeMorphEx = 1
 
 # parameters
 method = 'gaussien'
@@ -282,7 +356,7 @@ label_values = ["gaussien", "laplacien", "erode", "dilate","morphex"]
 struct_values = [ "rect", "cross"]
 morph_values = [ "open", "close"]
 
-img = cv2.imread('Filters/Images/img_projet2.jpg', cv2.IMREAD_GRAYSCALE)
+img = cv2.imread('img_projet2.jpg', cv2.IMREAD_GRAYSCALE)
 height, width = img.shape[:2]
 
 if img is None:
@@ -296,8 +370,7 @@ imgRes_l = []
 
 # Create a window and trackbar
 cv2.namedWindow('result_l',  cv2.WINDOW_NORMAL)
-filter()
-
+# cv2.namedWindow('Trackbars',  cv2.WINDOW_NORMAL)
 cv2.createTrackbar("Threshold", "result_l", th, 255, changeTh)
 cv2.createTrackbar("Type", "result_l", type, 4, changeType)
 cv2.createTrackbar("sizeErode", "result_l", sizeErode, 21, change_erode_size)
@@ -306,6 +379,10 @@ cv2.createTrackbar("sizeMorph", "result_l", sizeMorphEx, 21, change_morphEx_size
 cv2.createTrackbar('Filter', 'result_l', 0, len(label_values) - 1, changeFilter)
 cv2.createTrackbar('Struct', 'result_l', 0, len(struct_values) - 1, changeStructure)
 cv2.createTrackbar('Morph', 'result_l', 0, len(morph_values) - 1, changeMorphType)
+
+filter()
+
+
 
 cv2.waitKey(0)
 cv2.destroyAllWindows()
