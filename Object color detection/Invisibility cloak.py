@@ -5,26 +5,47 @@ from Fonctions import *
 
  
 # ----------------------------------------------------------------------------------------------------------------------------
- 
+def invisibility_cloak(frame, background, points, mask):
+    x, y = int(points[0][0] * 10), int(points[0][1] * 10)
 
+    # Extract dimensions of the object from the mask
+    mask = cv2.resize(mask, (0, 0), fx=10, fy=10)
+    w, h = mask.shape[:2]
+    w_frame, h_frame = frame.shape[:2]
+
+    # Iterate through the mask and add 2 pixels around the detected object
+    for i in in_range(w_frame):
+        for j in in_range(h_frame):
+            if mask[i, j] == 255:
+                # Set the central pixel to the background value
+                frame[i, j] = background[i, j]
+
+                # Update pixels around the central pixel (add 2 pixels)
+                for di in range(-4, 5):
+                    for dj in range(-4, 5):
+                        ni, nj = i + di, j + dj
+                        if 0 <= ni < w_frame and 0 <= nj < h_frame and mask[ni, nj] != 255:
+                            frame[ni, nj] = background[ni, nj]
+
+    return frame
 
 
 
 
  
 # ----------------------------------------------------------------------------------------------------------------------------
-def invisibility_cloak(frame, background, points, mask):
-    x, y = int(points[0][0] * 10), int(points[0][1] * 10)
+# def invisibility_cloak(frame, background, points, mask):
+#     x, y = int(points[0][0] * 10), int(points[0][1] * 10)
 
-    # Extract dimensions of the object from the mask 
-    mask = cv2.resize(mask, (0, 0), fx=10, fy=10)
-    w,h= mask.shape[:2]    
-    w_frame, h_frame = frame.shape[:2]
-    for i in range(w_frame):
-        for j in range(h_frame):
-            if mask[i,j] == 255:
-                frame[i,j] = background[i ,j]
-    return frame 
+#     # Extract dimensions of the object from the mask 
+#     mask = cv2.resize(mask, (0, 0), fx=10, fy=10)
+#     w,h= mask.shape[:2]    
+#     w_frame, h_frame = frame.shape[:2]
+#     for i in range(w_frame):
+#         for j in range(h_frame):
+#             if mask[i,j] == 255:
+#                 frame[i,j] = background[i ,j]
+#     return frame 
 
 # ----------------------------------------------------------------------------------------------------------------------------
 def capture_background():
