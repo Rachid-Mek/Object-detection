@@ -123,7 +123,22 @@ def combine_HSV(hue, saturation, value):
 
 # ----------------------------------------------------------------------------------------------------------------------------
 # ----------------------------------------------------------------------------------------------------------------------------
-
+def expand_mask(mask, expansion_pixels=4): 
+    """ Expand the mask by the number of pixels specified in expansion_pixels
+    Parameters:
+    ----------
+    - mask : mask to expand
+    - expansion_pixels : number of pixels to expand the mask by
+    Returns:
+    -------
+    - expanded_mask : expanded mask
+    """
+    # Pad the mask with zeros
+    expanded_mask = np.zeros((mask.shape[0] + 2 * expansion_pixels, mask.shape[1] + 2 * expansion_pixels), dtype=np.uint8)
+    # Copy the mask to the center of the padded mask
+    expanded_mask[expansion_pixels:expansion_pixels + mask.shape[0], expansion_pixels:expansion_pixels + mask.shape[1]] = mask
+    return expanded_mask
+# ----------------------------------------------------------------------------------------------------------------------------
 def in_range(start, stop=None, step=1):
     """Returns a generator of numbers in the specified range 
 
@@ -153,8 +168,23 @@ def in_range(start, stop=None, step=1):
         start += step
 # ----------------------------------------------------------------------------------------------------------------------------
 def check_color(pixel, color_lo, color_hi):
-    """Checks if a pixel is within a color range."""
-    for i in range(len(pixel)):
+    """Checks if a pixel is within a color range.
+    Parameters:
+    -----------
+    - pixel (array): Pixel value.
+    - color_lo (array): Lower bound of the color range.
+    - color_hi (array): Upper bound of the color range.
+    Returns:
+    --------
+    - bool: True if the pixel is within the color range, False otherwise.
+    Examples:
+    ---------
+    >>> check_color(np.array([0, 0, 0]), np.array([0, 0, 0]), np.array([10, 10, 10]))
+    True
+    >>> check_color(np.array([255, 255, 255]), np.array([0, 0, 0]), np.array([10, 10, 10]))
+    False
+    """
+    for i in in_range(len(pixel)):
         if not (pixel[i] >= color_lo[i] and pixel[i] <= color_hi[i]):
             return False
     return True
@@ -411,7 +441,7 @@ def detect_contours(binary_mask):
     for contour in contours: # Traverse contours
         centroid_x = sum(pixel[1] for pixel in contour) // len(contour) # Compute x-coordinate of the centroid
         centroid_y = sum(pixel[0] for pixel in contour) // len(contour) # Compute y-coordinate of the centroid
-        #if abs(centroid_x-centroid_y)>25:
+        #if abs(centroid_x-centroid_y)>25: # Check if the centroid is not on the diagonal
         centroids.append((centroid_x, centroid_y)) # Add the centroid to the list
 
     return centroids
@@ -441,15 +471,21 @@ def add_weighted(image1, alpha1, image2, alpha2):
     result[:, :, 1] = alpha1 * image1[:, :, 1] + alpha2 * image2[:, :, 1]   # Add the second channel
     result[:, :, 2] = alpha1 * image1[:, :, 2] + alpha2 * image2[:, :, 2]   # Add the third channel
 
-    result = np.clip(result, 0, 255).astype(np.uint8) 
-    
-    
-
+    result = np.clip(result, 0, 255).astype(np.uint8)  # Clip the result to the range [0, 255]
+ 
     return result
 
 # ----------------------------------------------------------------------------------------------------------------------------
  
-def find_contours(mask):
+def find_contours(mask): 
+    """Finds contours in a binary mask.
+    Parameters:
+    -----------
+    - mask (array): Binary mask to find contours in.
+    Returns:
+    --------
+    - list: List of contours.
+    """
     # Find contours without using cv2
     contours = []
     current_contour = []
@@ -460,7 +496,10 @@ def find_contours(mask):
     contours.append(np.array(current_contour))
     return contours
 # ----------------------------------------------------------------------------------------------------------------------------
- 
+# =============================================================================================================================
+# _____________________________________________________GAME____________________________________________________________________________________________________________________
+# ----------------------------------------------------------------------------------------------------------------------------
+# =============================================================================================================================
 import cv2
 # _____________________________________________________GAME____________________________________________________________________________________________________________________
 car = cv2.imread('Object color detection/Images/car.png', cv2.IMREAD_UNCHANGED)
@@ -527,9 +566,9 @@ def resize_image_3d(image, scale_factor):
     
     resized_image = np.zeros((new_height, new_width, image.shape[2]), dtype=np.uint8)
     
-    for i in range(new_height):
-        for j in range(new_width):
-            for k in range(image.shape[2]):
+    for i in in_range(new_height):
+        for j in in_range(new_width):
+            for k in in_range(image.shape[2]):
                 resized_image[i, j, k] = image[int(i / scale_factor), int(j / scale_factor), k]
     
     return resized_image

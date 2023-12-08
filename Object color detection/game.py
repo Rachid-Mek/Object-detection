@@ -5,6 +5,8 @@ from Cam_detection import *
 
 
 def game():
+    """ Launch the game
+    """
     vitesse = 300
     cap = cv2.VideoCapture(0)
     if not cap.isOpened():
@@ -12,9 +14,9 @@ def game():
         exit(0)
 
     # Charger l'image de la voiture avec canal alpha
-    car = cv2.imread('Object color detection/Images/car.png', cv2.IMREAD_UNCHANGED)
+    car = cv2.imread('Images/car.png', cv2.IMREAD_UNCHANGED)
     # Charger l'image de contour
-    contour = cv2.imread('Object color detection/Images/contour.jpg', cv2.IMREAD_COLOR)
+    contour = cv2.imread('Images/contour.jpg', cv2.IMREAD_COLOR)
 
     # Extraire le canal alpha de l'image de la voiture (le contour noir)
     alpha_channel = car[:, :, 3]
