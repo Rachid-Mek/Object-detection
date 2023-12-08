@@ -118,7 +118,7 @@ def filter2D(kernel):
 """ Erosion: effectue un « et » logique entre les voisins d’un pixel (diminue le contour de l’ordre
 d’un pixel)"""
 
-def erode_cross(sizeErode):
+def erode_cross(img, sizeErode):
     
 
     # Initialize the loop variables
@@ -152,9 +152,10 @@ def erode_cross(sizeErode):
             j += 1
         # Move to the next row
         i += 1
+    return imgRes_l
 
         
-def erode_rect(sizeErode):
+def erode_rect(img, sizeErode):
     # Initialize the loop variable for the row index
     i = 0
     # Iterate over the rows of the image
@@ -187,12 +188,13 @@ def erode_rect(sizeErode):
             j += 1
         # Move to the next row
         i += 1
+    return imgRes_l
 
 
 #~~~Dilate~~~~~~~~~~~~~~~~~~~~
 """Dilatation: effectue un « ou » logique entre les voisins d’un pixel (augmente l’épaisseur d’un
 contour) """
-def dilate_cross(sizeDilate):
+def dilate_cross(img, sizeDilate):
     # Initialize the loop variable for the row index
     i = 0
     # Iterate over the rows of the image
@@ -224,10 +226,11 @@ def dilate_cross(sizeDilate):
             j += 1
         # Move to the next row
         i += 1
+    return imgRes_l
 
 
         
-def dilate_rect(sizeDilate):
+def dilate_rect(img, sizeDilate):
     # Initialize the loop variable for the row index
     i = 0
     # Iterate over the rows of the image
@@ -260,35 +263,103 @@ def dilate_rect(sizeDilate):
             j += 1
         # Move to the next row
         i += 1
-
+    return imgRes_l
 
 #~~~MorphEx~~~~~~~~~~~~~~~~~~~~
 
 def morph_rect_open():
     # Apply erosion using a rectangular structuring element
-    erode_rect(sizeMorphEx)
+    imgRes_l = erode_rect(img, sizeMorphEx)
+    imgRes_l_np = np.array(imgRes_l, dtype=np.uint8)
     # Apply dilation using a rectangular structuring element
-    dilate_rect(sizeMorphEx)
+    dilate_rect(imgRes_l_np, sizeMorphEx)
 
 def morph_cross_open():
     # Apply erosion using a cross-shaped structuring element
-    erode_cross(sizeMorphEx)
+    imgRes_l = erode_cross(img, sizeMorphEx)
+    imgRes_l_np = np.array(imgRes_l, dtype=np.uint8)
     # Apply dilation using a cross-shaped structuring element
-    dilate_cross(sizeMorphEx)
+    dilate_cross(imgRes_l_np, sizeMorphEx)
 
 def morph_rect_closed():
     # Apply dilation using a rectangular structuring element
-    dilate_rect(sizeMorphEx)
+    imgRes_l = dilate_rect(img, sizeMorphEx)
+    imgRes_l_np = np.array(imgRes_l, dtype=np.uint8)
     # Apply erosion using a rectangular structuring element
-    erode_rect(sizeMorphEx)
+    erode_rect(imgRes_l_np, sizeMorphEx)
 
 def morph_cross_closed():
     # Apply dilation using a cross-shaped structuring element
-    dilate_cross(sizeMorphEx)
+    imgRes_l = dilate_cross(img, sizeMorphEx)
+    imgRes_l_np = np.array(imgRes_l, dtype=np.uint8)
     # Apply erosion using a cross-shaped structuring element
-    erode_cross(sizeMorphEx)
+    erode_cross(imgRes_l_np, sizeMorphEx)
 
-       
+#--Additional Filters------------------------------------------------------------------------------------------------------------------------------------------------------
+#~~~Sobel Filter~~~~~~~~~~~~~~~~~~~~
+def filter2D_sobel(kernel):
+    img_filter = []
+    img_filter = np.zeros_like(img) 
+    # Initialize the loop variable for the row index
+    i = 0
+    # Iterate over the rows of the image
+    while i < height:
+        # Initialize the loop variable for the column index
+        j = 0
+        # Iterate over the columns of the image
+        while j < width:
+            # Handle boundary conditions by replicating edge pixels
+            i_index = min(max(i, 1), height - 2)
+            j_index = min(max(j, 1), width - 2)
+
+            # Perform 2D convolution using the provided kernel
+            pixel_value = (
+                img[i_index][j_index] * kernel[1][1] +  # Center
+                img[i_index - 1][j_index] * kernel[0][1] +  # Left
+                img[i_index + 1][j_index] * kernel[2][1] +  # Right
+                img[i_index][j_index - 1] * kernel[1][0] +  # Up
+                img[i_index][j_index + 1] * kernel[1][2] +  # Down
+                img[i_index - 1][j_index - 1] * kernel[0][0] +  # Upper Left
+                img[i_index - 1][j_index + 1] * kernel[0][2] +  # Lower Left
+                img[i_index + 1][j_index - 1] * kernel[2][0] +  # Upper Right
+                img[i_index + 1][j_index + 1] * kernel[2][2]    # Lower Right
+            )
+            # Update the result image with the computed pixel value
+            img_filter[i][j] = pixel_value
+            # Move to the next column
+            j += 1
+        # Move to the next row
+        i += 1
+    return img_filter
+
+def sobel_filter():
+    # Sobel filter kernels
+    sobel_kernel_x = np.array([[1, 0, -1], [2, 0, -2], [1, 0, -1]])
+    sobel_kernel_y = np.array([[1, 2, 1], [0, 0, 0], [-1, -2, -1]])
+
+    # Compute gradients in both x and y directions
+    gradient_x = filter2D_sobel(sobel_kernel_x)
+    gradient_y = filter2D_sobel(sobel_kernel_y)
+
+    # Compute the gradient magnitude
+    gradient_magnitude = np.sqrt(gradient_x**2 + gradient_y**2)
+
+    # Normalize and convert to uint8
+    gradient_magnitude = (gradient_magnitude / gradient_magnitude.max() * 255).astype(np.uint8)
+
+    # Update the result image with the Sobel filter output
+    i = 0
+    while i < height:
+        j = 0
+        while j < width:
+            imgRes_l[i][j] = gradient_magnitude[i][j]
+            j += 1
+        i += 1
+# #~~~Emboss~~~~~~~~~~~~~~~~~~~~
+def emboss_filter():
+        # Emboss filter kernel
+    emboss_kernel = np.array([[-2, -1, 0], [-1, 1, 1], [0, 1, 2]])
+    filter2D(emboss_kernel)
 
 
 #-----Global Filter Function---------------------------------------------------------------------------------------------------------------------------------------------------
@@ -310,14 +381,14 @@ def filter():
         filter2D(kernel)
     elif method == 'erode':
         if structure == "rect":
-            erode_rect(sizeErode)
+            erode_rect(img, sizeErode)
         elif structure == "cross":
-            erode_cross(sizeErode)
+            erode_cross(img, sizeErode)
     elif method == 'dilate':
         if structure == "rect":
-            dilate_rect(sizeDilate)
+            dilate_rect(img, sizeDilate)
         elif structure == "cross":
-            dilate_cross(sizeDilate)
+            dilate_cross(img, sizeDilate)
     elif method == 'morphex':
         if structure == "rect":
             if morph_type == 'open':
@@ -329,6 +400,10 @@ def filter():
                 morph_cross_open()
             elif morph_type == 'close':
                 morph_cross_closed()
+    elif method == 'sobel':
+        sobel_filter()
+    elif method == 'emboss':
+        emboss_filter() 
 
     # Thresholding
     thresholding()
@@ -352,11 +427,13 @@ method = 'gaussien'
 structure = 'rect'
 morph_type = 'open'
 
-label_values = ["gaussien", "laplacien", "erode", "dilate","morphex"]
+label_values = ["gaussien", "laplacien", "erode", "dilate","morphex", "sobel", "emboss"]
 struct_values = [ "rect", "cross"]
 morph_values = [ "open", "close"]
 
-img = cv2.imread('img_projet2.jpg', cv2.IMREAD_GRAYSCALE)
+# img = cv2.imread('photo.jpeg', cv2.IMREAD_GRAYSCALE)
+img = cv2.imread('Filters/Images/img_projet2.jpg', cv2.IMREAD_GRAYSCALE)
+
 height, width = img.shape[:2]
 
 if img is None:
@@ -370,15 +447,22 @@ imgRes_l = []
 
 # Create a window and trackbar
 cv2.namedWindow('result_l',  cv2.WINDOW_NORMAL)
-# cv2.namedWindow('Trackbars',  cv2.WINDOW_NORMAL)
-cv2.createTrackbar("Threshold", "result_l", th, 255, changeTh)
-cv2.createTrackbar("Type", "result_l", type, 4, changeType)
-cv2.createTrackbar("sizeErode", "result_l", sizeErode, 21, change_erode_size)
-cv2.createTrackbar("sizeDilate", "result_l", sizeDilate, 21, change_dilate_size)
-cv2.createTrackbar("sizeMorph", "result_l", sizeMorphEx, 21, change_morphEx_size)
-cv2.createTrackbar('Filter', 'result_l', 0, len(label_values) - 1, changeFilter)
-cv2.createTrackbar('Struct', 'result_l', 0, len(struct_values) - 1, changeStructure)
-cv2.createTrackbar('Morph', 'result_l', 0, len(morph_values) - 1, changeMorphType)
+cv2.namedWindow('Trackbars',  cv2.WINDOW_NORMAL)
+# Set the desired width and height for the window
+new_width = 300
+new_height = 200
+
+# Resize the window
+cv2.resizeWindow('Trackbars', new_width, new_height)
+
+cv2.createTrackbar("Threshold", "Trackbars", th, 255, changeTh)
+cv2.createTrackbar("Type", "Trackbars", type, 4, changeType)
+cv2.createTrackbar("sizeErode", "Trackbars", sizeErode, 21, change_erode_size)
+cv2.createTrackbar("sizeDilate", "Trackbars", sizeDilate, 21, change_dilate_size)
+cv2.createTrackbar("sizeMorph", "Trackbars", sizeMorphEx, 21, change_morphEx_size)
+cv2.createTrackbar('Filter', 'Trackbars', 0, len(label_values) - 1, changeFilter)
+cv2.createTrackbar('Struct', 'Trackbars', 0, len(struct_values) - 1, changeStructure)
+cv2.createTrackbar('Morph', 'Trackbars', 0, len(morph_values) - 1, changeMorphType)
 
 filter()
 
