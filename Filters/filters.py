@@ -331,7 +331,7 @@ def filter():
                 morph_cross_closed()
 
     # Thresholding
-    treshholding()
+    thresholding()
 
     # Convert the result to a NumPy array for displaying
     imgRes_l_np = np.array(imgRes_l, dtype=np.uint8)
