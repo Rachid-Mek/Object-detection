@@ -528,6 +528,31 @@ def resize_image_3d(image, scale_factor):
     return resized_image
 
 def check_collision(car_pos_x, car_pos_y, car_width, car_height, obstacle_pos_x, obstacle_pos_y, obstacle_width, obstacle_height):
+    '''
+    Check if the car and the obstacle collide or not
+
+    Parameters:
+    -----------
+    - car_pos_x (int): X-coordinate of the car.
+    - car_pos_y (int): Y-coordinate of the car.
+    - car_width (int): Width of the car.
+    - car_height (int): Height of the car.
+    - obstacle_pos_x (int): X-coordinate of the obstacle.
+    - obstacle_pos_y (int): Y-coordinate of the obstacle.
+    - obstacle_width (int): Width of the obstacle.
+    - obstacle_height (int): Height of the obstacle.
+
+    Returns:
+    --------
+    - bool: True if the car and the obstacle collide, False otherwise.
+
+    Examples:
+    ---------
+    >>> check_collision(0, 0, 10, 10, 0, 0, 10, 10)
+    True
+    '''
+    
+    
     # Coordonnées de la voiture et de l'obstacle
     car_left, car_right, car_top, car_bottom = car_pos_x, car_pos_x + car_width, car_pos_y, car_pos_y + car_height
     obstacle_left, obstacle_right, obstacle_top, obstacle_bottom = (
