@@ -64,13 +64,18 @@ def game():
                         (10, frame.shape[0] - 10), cv2.FONT_HERSHEY_SIMPLEX, 1.25, (0, 255, 0), 4)
 
         # Afficher la fenêtre de la caméra
-        cv2.imshow('Caméra', frame)
+        cv2.imshow('Camera', frame)
 
         # Continuer avec la fenêtre du jeu
         if obj_info and len(obj_info[2]) > 0:
             blurred_img, _, obj_coords = obj_info
-
-            fenetre = contour.copy() 
+            # reinitialiser la fenêtre du jeu avec le contour de l'image
+            fenetre = np.zeros_like(contour)
+            #copier le contour dans la fenêtre pixel par pixel
+            for i in range(contour.shape[0]):
+                for j in range(contour.shape[1]):
+                    for c in range(contour.shape[2]):
+                        fenetre[i, j, c] = contour[i, j, c] 
             
             # Ajuster la position de la voiture pour ne pas dépasser les limites
             car_pos_x = max(0, min(car_pos_x, fenetre.shape[1] - car.shape[1]))
@@ -108,7 +113,7 @@ def game():
             # Mettre à jour la position de l'obstacle
             obstacle_pos_y += vitesse_descente  # vitesse de descente ici
             obstacle_pos_y2 += vitesse_descente  # vitesse de descente ici
-            vitesse_descente += 0.1  # accélération de la vitesse de descente
+            vitesse_descente += 0.2  # accélération de la vitesse de descente
 
             # Réinitialiser la position de l'obstacle lorsqu'il atteint le bas de l'image
             if obstacle_pos_y > contour.shape[0]:
@@ -139,7 +144,7 @@ def game():
             # Si collision, afficher "Game Over" et fermer la fenêtre
             if collision1 or collision2:
                 cv2.putText(fenetre, "Game Over", (100, 250), cv2.FONT_HERSHEY_SIMPLEX, 2, (255, 0, 0), 3)
-                cv2.imshow('Jeu de Course', fenetre)
+                cv2.imshow('brick racing game', fenetre)
                 cv2.waitKey(2500)  # Attendre 2.5 secondes
                 break
 
@@ -159,7 +164,7 @@ def game():
                 car_pos_x += 10
 
             # Afficher la fenêtre du jeu
-            cv2.imshow('Jeu de Course', fenetre)
+            cv2.imshow('brick racing game', fenetre)
 
         # Capturer la touche pressée (pour quitter la boucle si nécessaire)
         key = cv2.waitKey(1) & 0xFF
