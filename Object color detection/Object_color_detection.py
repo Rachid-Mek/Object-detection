@@ -5,9 +5,11 @@ from Fonctions import *
 
 def object_color_detection(img, color_lo=np.array([95, 80, 50]), color_hi=np.array([115, 255, 255])):
     """ Detect the object in the image base on its color and return the image with the object detected and the mask
+    
     Parameters:
     ----------
     - img : image to detect the object in it
+
     Returns:
     -------
     - img : image with the object detected
@@ -67,5 +69,5 @@ def launch_object_color_detection():
     cv2.destroyAllWindows() # Close all windows
 
 # ----------------------------------------------------------------------------------------------------------------------------
-launch_object_color_detection() # Launch the camera and detect the object in the image captured by the camera
+# launch_object_color_detection() # Launch the camera and detect the object in the image captured by the camera
 # ----------------------------------------------------------------------------------------------------------------------------

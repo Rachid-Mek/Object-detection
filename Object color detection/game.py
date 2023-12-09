@@ -5,89 +5,80 @@ from Cam_detection import *
 
 
 def game():
-    """ Launch the game
+    """ Launch the game and detect the object in the image captured by the camera and move the car according to the object position
     """
-    vitesse = 300
-    cap = cv2.VideoCapture(0)
-    if not cap.isOpened():
-        print("Erreur de capture")
-        exit(0)
+    vitesse = 300 # speed of the car
+    cap = cv2.VideoCapture(0) # Launch the camera
+    if not cap.isOpened(): # Check if the camera is opened
+        print("Erreur de capture") # Print an error message
+        exit(0) # Exit the program
 
-    # Charger l'image de la voiture avec canal alpha
-    car = cv2.imread('Images/car.png', cv2.IMREAD_UNCHANGED)
-    # Charger l'image de contour
-    contour = cv2.imread('Images/contour.jpg', cv2.IMREAD_COLOR)
+    car = cv2.imread('Images/car.png', cv2.IMREAD_UNCHANGED) # Read the image of the car with the alpha channel
+    contour = cv2.imread('Images/contour.jpg', cv2.IMREAD_COLOR) # Read the image of the contour of the game
 
-    # Extraire le canal alpha de l'image de la voiture (le contour noir)
-    alpha_channel = car[:, :, 3]
+    alpha_channel = car[:, :, 3] # Extract the alpha channel of the car image 
 
-    # Resize de l'image de contour
-    contour = cv2.resize(contour, (500, 500))  # 500x500 pixels
+    contour = cv2.resize(contour, (500, 500))  # Resize the contour image to the size of the game window which is 500x500
 
-    # Position initiale de l'obstacle
-    obstacle_pos_x = np.random.randint(0, contour.shape[1] - 30)
-    obstacle_pos_y = 0
+    obstacle_pos_x = np.random.randint(0, contour.shape[1] - 30) # Generate a random position for the obstacle
+    obstacle_pos_y = 0 # Initial position of the obstacle
 
-    obstacle_pos_x2 = np.random.randint(0, contour.shape[1] - 30)
-    obstacle_pos_y2 = 0
+    obstacle_pos_x2 = np.random.randint(0, contour.shape[1] - 30) # Generate a random position for the obstacle
+    obstacle_pos_y2 = 0 # Initial position of the obstacle
 
-    # Position initiale de la voiture
-    car_pos_x = (contour.shape[1] - car.shape[1]) // 2 # la voiture se positionne au milieu de l'image
-    car_pos_y = contour.shape[0] - car.shape[0] # la voiture se positionne en bas de l'image
+    car_pos_x = (contour.shape[1] - car.shape[1]) // 2  # Initial position of the car in the middle of the game window
+    car_pos_y = contour.shape[0] - car.shape[0]  # Initial position of the car at the bottom of the game window
 
-    # Initialiser la position précédente de l'objet détecté
-    prev_obj_center_x = 0
+    prev_obj_center_x = 0 # Previous object center x position
 
-    while True:
-        ret, frame = cap.read()
-        cv2.flip(frame,1,frame)
-        if not ret:
-            print("Error in image read")
+    while True: # Loop until the user press the key 'q'
+        ret, frame = cap.read() # Capture the frame
+        cv2.flip(frame,1,frame) # Flip the frame horizontally
+        if not ret: # Check if the frame is captured
+            print("Error in image read") # Print an error message
             break
 
-        resized_frame = resize_image_3d(frame, 0.1)
+        resized_frame = resize_image_3d(frame, 0.1) # Resize the frame to a lower resolution for faster processing
 
         # Detect the object and get its information
-        obj_info = detect_object(resized_frame)
+        obj_info = detect_object(resized_frame) # Detect the object in the image captured by the camera
 
         # Display the camera window with circles and points
-        if obj_info and len(obj_info[2]) > 0:
-            _, _, obj_coords = obj_info
-            cv2.circle(frame, (int(obj_coords[0][0] * 10), int(obj_coords[0][1] * 10)), 20, (0, 255, 0), 5)
+        if obj_info and len(obj_info[2]) > 0: # Check if the object is detected
+            _, _, obj_coords = obj_info # Get the object coordinates
+            cv2.circle(frame, (int(obj_coords[0][0] * 10), int(obj_coords[0][1] * 10)), 20, (0, 255, 0), 5) # Draw a circle around the object
             cv2.putText(frame, "x: {}, y: {}".format(int(obj_coords[0][0] * 10), int(obj_coords[0][1] * 10)),
                         (10, frame.shape[0] - 10), cv2.FONT_HERSHEY_SIMPLEX, 1.25, (0, 255, 0), 4)
 
-        cv2.imshow('Camera', frame)
+        cv2.imshow('Camera', frame) # Show the camera window
 
         # Continue with the game window
-        if obj_info and len(obj_info[2]) > 0:
-            blurred_img, _, obj_coords = obj_info
+        if obj_info and len(obj_info[2]) > 0: # Check if the object is detected
+            blurred_img, _, obj_coords = obj_info # Get the object coordinates
 
-            fenetre = contour.copy()
+            fenetre = contour.copy() # Copy the contour image
 
             # Dessiner la voiture sur la fenêtre avec la transparence correcte
             for c in in_range(3):
-                car_pos_x = max(0, min(car_pos_x, fenetre.shape[1] - car.shape[1]))
+                car_pos_x = max(0, min(car_pos_x, fenetre.shape[1] - car.shape[1])) # Check if the car exceeds the left boundary
 
-                # Check if the car exceeds the left boundary
-                left_boundary = max(car_pos_x, 0)
-                # Check if the car exceeds the right boundary
-                right_boundary = min(car_pos_x + car.shape[1], fenetre.shape[1])
+                left_boundary = max(car_pos_x, 0)  # Check if the car exceeds the left boundary
+                right_boundary = min(car_pos_x + car.shape[1], fenetre.shape[1]) # Check if the car exceeds the right boundary
 
                 fenetre[car_pos_y:car_pos_y + car.shape[0], left_boundary:right_boundary, c] = (
                     car[:, car_pos_x - left_boundary:car_pos_x - left_boundary + (right_boundary - left_boundary), c] * 
                     (alpha_channel / 255.0) +
                     fenetre[car_pos_y:car_pos_y + car.shape[0], left_boundary:right_boundary, c] *
                     (1.0 - alpha_channel / 255.0)
-                ).astype(np.uint8)
+                ).astype(np.uint8) # Draw the car on the game window with the correct transparency
             
-            # Dessiner l'obstacle (rectangle rouge)
+            # Draw the obstacles on the game window (red rectangles)
             fenetre[obstacle_pos_y:obstacle_pos_y + 40, obstacle_pos_x:obstacle_pos_x + 30] = [0, 0, 255]  # rouge
             fenetre[obstacle_pos_y2:obstacle_pos_y2 + 40, obstacle_pos_x2:obstacle_pos_x2 + 30] = [0, 0, 255]  # rouge
 
-            # Mettre à jour la position de l'obstacle
-            obstacle_pos_y += 5  # vitesse de descente ici
-            obstacle_pos_y2 += 5  # vitesse de descente ici
+            # Update the position of the obstacles
+            obstacle_pos_y += 5   # vitesse de descente ici
+            obstacle_pos_y2 += 5   # vitesse de descente ici
 
             # Réinitialiser la position de l'obstacle lorsqu'il atteint le bas de l'image
             if obstacle_pos_y > contour.shape[0]:

@@ -3,13 +3,13 @@ import numpy as np
 
 def color_to_hsv_range(color):
     """Converts a color to a range of HSV values.
-    Parameters:
+    Parameters
     -----------
     - color (tuple): RGB color to convert.
-    Returns:
+    Returns
     --------
     - tuple: Lower and upper bounds of the HSV range.
-    Examples:
+    Examples
     ---------
     >>> color_to_hsv_range((0, 0, 0))
     (array([  0, 100, 100]), array([ 10, 255, 255]))
@@ -29,10 +29,10 @@ def color_to_hsv_range(color):
 
 def get_image_dimensions(image):
     """Returns the dimensions of an image.
-    Parameters:
+    Parameters
     -----------
     - image (array): Image to get the dimensions of.
-    Returns:
+    Returns
     --------
     - tuple: Height and width of the image.
 
@@ -45,13 +45,13 @@ def get_image_dimensions(image):
 # ----------------------------------------------------------------------------------------------------------------------------
 def maximum_reduce(channels):
     """Reduces a list of arrays to a single array by taking the maximum value 
-    Parameters:
+    Parameters
     -----------
     - channels (list): List of arrays to reduce.
-    Returns:
+    Returns
     --------
     - array: Maximum values of the input arrays.
-    Examples:
+    Examples
     ---------
     >>> maximum_reduce([np.array([1, 2, 3]), np.array([4, 5, 6])])
     array([4, 5, 6])
@@ -72,15 +72,15 @@ def maximum_reduce(channels):
 def minimum_reduce(channels):
     """Reduces a list of arrays to a single array by taking the minimum value 
 
-    Parameters:
+    Parameters
     -----------
     - channels (list): List of arrays to reduce.
 
-    Returns:
+    Returns
     --------
     - array: Minimum values of the input arrays.
 
-    Examples:
+    Examples
     ---------
     >>> minimum_reduce([np.array([1, 2, 3]), np.array([4, 5, 6])])
     array([1, 2, 3])
@@ -101,17 +101,17 @@ def minimum_reduce(channels):
 def combine_HSV(hue, saturation, value):
     """Combines hue, saturation, and value channels into a single HSV image .
 
-    Parameters:
+    Parameters
     -----------
     - hue (array): Hue channel.
     - saturation (array): Saturation channel.
     - value (array): Value channel.
 
-    Returns:
+    Returns
     --------
     - array: HSV image.
 
-    Examples:
+    Examples
     ---------
     >>> combine_HSV(np.array([0, 1, 2]), np.array([3, 4, 5]), np.array([6, 7, 8]))
     array([[[0, 3, 6],
@@ -123,15 +123,19 @@ def combine_HSV(hue, saturation, value):
 
 # ----------------------------------------------------------------------------------------------------------------------------
 # ----------------------------------------------------------------------------------------------------------------------------
-def expand_mask(mask, expansion_pixels=4): 
+def expand_mask(mask, expansion_pixels=2): 
     """ Expand the mask by the number of pixels specified in expansion_pixels
-    Parameters:
+
+    Parameters
     ----------
     - mask : mask to expand
     - expansion_pixels : number of pixels to expand the mask by
-    Returns:
+
+    Returns
     -------
     - expanded_mask : expanded mask
+
+
     """
     # Pad the mask with zeros
     expanded_mask = np.zeros((mask.shape[0] + 2 * expansion_pixels, mask.shape[1] + 2 * expansion_pixels), dtype=np.uint8)
@@ -142,17 +146,17 @@ def expand_mask(mask, expansion_pixels=4):
 def in_range(start, stop=None, step=1):
     """Returns a generator of numbers in the specified range 
 
-    Parameters:
+    Parameters
     -----------
     - start (int): Start of the range.
     - stop (int): End of the range.
     - step (int): Step size.
 
-    Returns:
+    Returns
     --------
     - generator: Numbers in the specified range.
 
-    Examples:
+    Examples
     ---------
     >>> list(in_range(3))
     [0, 1, 2]
@@ -169,15 +173,17 @@ def in_range(start, stop=None, step=1):
 # ----------------------------------------------------------------------------------------------------------------------------
 def check_color(pixel, color_lo, color_hi):
     """Checks if a pixel is within a color range.
-    Parameters:
+    Parameters
     -----------
     - pixel (array): Pixel value.
     - color_lo (array): Lower bound of the color range.
     - color_hi (array): Upper bound of the color range.
-    Returns:
+
+    Returns
     --------
     - bool: True if the pixel is within the color range, False otherwise.
-    Examples:
+
+    Examples
     ---------
     >>> check_color(np.array([0, 0, 0]), np.array([0, 0, 0]), np.array([10, 10, 10]))
     True
@@ -191,18 +197,17 @@ def check_color(pixel, color_lo, color_hi):
 # ----------------------------------------------------------------------------------------------------------------------------
 # ----------------------------------------------------------------------------------------------------------------------------
 def bgr_to_hsv(img):
-    # local documentation 
     """Converts an image from BGR color space to HSV color space.
     
-    Parameters:
+    Parameters
     -----------
     - img (array): Image to convert.
 
-    Returns:
+    Returns
     --------
     - array: Image in HSV color space.
 
-    Examples:
+    Examples
     ---------
     >>> bgr_to_hsv(np.array([[[0, 0, 0], [255, 255, 255]]]))
     array([[[  0,   0,   0],
@@ -253,16 +258,16 @@ def bgr_to_hsv(img):
 def pad_image(image, pad):
     """Pads an image with a border of zeros.
 
-    Parameters:
+    Parameters
     -----------
     - image (array): Image to pad.
     - pad (int): Size of the border.
 
-    Returns:
+    Returns
     --------
     - array: Padded image.
 
-    Examples:
+    Examples
     ---------
     >>> pad_image(np.array([[[0, 0, 0], [255, 255, 255]]]), 1)
     array([[[  0,   0,   0],
@@ -293,16 +298,16 @@ def pad_image(image, pad):
 def Apply_blur(image, kernel_size):
     """Applies a blur filter to an image.
 
-    Parameters:
+    Parameters
     -----------
     - image (array): Image to apply the blur filter to.
     - kernel_size (int): Size of the blur kernel.
 
-    Returns:
+    Returns
     --------
     - array: Blurred image.
 
-    Examples:
+    Examples
     ---------
     >>> Apply_blur(np.array([[[0, 0, 0], [255, 255, 255]]]), 3)
     array([[[  0,   0,   0],
@@ -335,15 +340,15 @@ def Apply_blur(image, kernel_size):
 # ---------------------------------------------------------------------------------------------------------------------------- 
 def Verify_bounds(img, lower_bound, upper_bound):
     """Returns a mask where pixels are within the specified range.
-    Parameters:
+    Parameters
     -----------
     - img (array): Image to get the mask of.
     - lower_bound (array): Lower bound of the range.
     - upper_bound (array): Upper bound of the range.
-    Returns:
+    Returns
     --------
     - array: Mask where pixels are within the specified range.
-    Examples:
+    Examples
     ---------
     >>> inRange(np.array([[[0, 0, 0], [255, 255, 255]]]), np.array([0, 0, 0]), np.array([10, 10, 10]))
     array([[[  0,   0,   0],
@@ -363,27 +368,27 @@ def Verify_bounds(img, lower_bound, upper_bound):
 def threshold(image, lo, hi):
     """ Returns a binary mask where pixels are within the specified range.
 
-    Parameters:
+    Parameters
     -----------
     - image (array): Image to get the mask of.
     - lo (array): Lower bound of the range.
     - hi (array): Upper bound of the range.
 
-    Returns:
+    Returns
     --------
     - array: Binary mask where pixels are within the specified range.
 
-    Examples:
+    Examples
     ---------
     >>> threshold(np.array([[[0, 0, 0], [255, 255, 255]]]), np.array([0, 0, 0]), np.array([10, 10, 10]))
     array([[0, 0, 0], [255, 255, 255]], dtype=uint8)
 
     """
-    height, width, channels = image.shape # Get the dimensions of the image
+    height, width, _ = image.shape # Get the dimensions of the image
     binary_mask = np.zeros((height, width), dtype=np.uint8) # Initialize a binary mask
 
-    for i in in_range(height):
-        for j in in_range(width):
+    for i in in_range(height): # Traverse rows
+        for j in in_range(width): # Traverse columns
             # Check if the pixel value lies within the specified range
             if lo[0] <= image[i, j, 0] <= hi[0] and lo[1] <= image[i, j, 1] <= hi[1] and lo[2] <= image[i, j, 2] <= hi[2]:
                 binary_mask[i, j] = 255  # Set the pixel to white (255) in the mask
@@ -393,16 +398,16 @@ def threshold(image, lo, hi):
 def detect_contours(binary_mask):
     """Detects contours in a binary mask. 
 
-    Parameters:
+    Parameters
     -----------
     - binary_mask (array): Binary mask to detect contours in.
 
-    Returns:
+    Returns
     --------
     - list: List of contours.
     - list: List of centroids of the contours.
 
-    Examples:
+    Examples
     ---------
     >>> detect_contours(np.array([[0, 0, 0], [255, 255, 255]]))
     ([[(1, 0), (1, 1)]], [(1, 0)])
@@ -441,7 +446,7 @@ def detect_contours(binary_mask):
     for contour in contours: # Traverse contours
         centroid_x = sum(pixel[1] for pixel in contour) // len(contour) # Compute x-coordinate of the centroid
         centroid_y = sum(pixel[0] for pixel in contour) // len(contour) # Compute y-coordinate of the centroid
-        #if abs(centroid_x-centroid_y)>25: # Check if the centroid is not on the diagonal
+        # if abs(centroid_x-centroid_y)>25: # Check if the centroid is not on the diagonal
         centroids.append((centroid_x, centroid_y)) # Add the centroid to the list
 
     return centroids
@@ -452,14 +457,14 @@ def add_weighted(image1, alpha1, image2, alpha2):
     """
     Perform weighted addition of two images: output = alpha1 * image1 + alpha2 * image2 
     
-    Parameters:
+    Parameters
     -----------
     - image1 (array): First image to add.
     - alpha1 (float): Weight of the first image.
     - image2 (array): Second image to add.
     - alpha2 (float): Weight of the second image.
 
-    Returns:
+    Returns
     --------
     - array: Weighted addition of the two images.
     """
@@ -479,10 +484,10 @@ def add_weighted(image1, alpha1, image2, alpha2):
  
 def find_contours(mask): 
     """Finds contours in a binary mask.
-    Parameters:
+    Parameters
     -----------
     - mask (array): Binary mask to find contours in.
-    Returns:
+    Returns
     --------
     - list: List of contours.
     """
@@ -585,3 +590,35 @@ def check_collision(car_pos_x, car_pos_y, car_width, car_height, obstacle_pos_x,
         car_right > obstacle_left and car_left < obstacle_right and
         car_bottom > obstacle_top and car_top < obstacle_bottom
     )
+
+# ----------------------------------------------------------------------------------------------------------------------------
+import numpy as np
+
+def resize_image(image, new_width, new_height):
+    # Get the original dimensions
+    original_height, original_width = image.shape[:2]
+
+    # Create an empty array for the resized image
+    resized_image = np.zeros((new_height, new_width, 3), dtype=np.uint8)
+
+    # Calculate the scaling factors for width and height
+    scale_x = new_width / original_width
+    scale_y = new_height / original_height
+
+    # Iterate through each pixel in the resized image and assign the corresponding pixel from the original image
+    for i in range(new_height):
+        for j in range(new_width):
+            original_i = int(i / scale_y)
+            original_j = int(j / scale_x)
+
+            # Ensure that the indices are within the original image bounds
+            original_i = min(original_i, original_height - 1)
+            original_j = min(original_j, original_width - 1)
+
+            # Assign the pixel value from the original image to the resized image
+            resized_image[i, j, :] = image[original_i, original_j, :]
+
+    return resized_image
+
+ 
+# ----------------------------------------------------------------------------------------------------------------------------

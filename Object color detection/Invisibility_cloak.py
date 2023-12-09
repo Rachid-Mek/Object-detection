@@ -7,15 +7,19 @@ from Fonctions import * # import all functions from Fonctions.py
 # ----------------------------------------------------------------------------------------------------------------------------
 def invisibility_cloak(frame, background, points, mask):
     """ Make the object disappear from the frame and replace it with the background
-    Parameters:
+    
+    Parameters
     ----------
     - frame : frame to make the object disappear from it
     - background : background to replace the object with it
     - points : list of the points of the object detected
     - mask : mask of the object detected
-    Returns:
+
+    Returns
     -------
     - frame : frame with the object disappeared
+
+
     """
     x, y = int(points[0][0] * 10), int(points[0][1] * 10) # Get the coordinates of the object
 
@@ -28,8 +32,8 @@ def invisibility_cloak(frame, background, points, mask):
             if mask[i, j] == 255: # Check if the pixel is part of the object
                 frame[i, j] = background[i, j] # Replace the pixel with the corresponding pixel from the background
 
-                for di in in_range(-4, 5): # Iterate through the frame
-                    for dj in in_range(-4, 5): # Iterate through the frame 
+                for di in in_range(-7, 8): # Iterate through the frame
+                    for dj in in_range(-7, 8): # Iterate through the frame 
                         ni, nj = i + di, j + dj # Get the new coordinates
                         if 0 <= ni < w_frame and 0 <= nj < h_frame and mask[ni, nj] != 255: # Check if the pixel is not part of the object
                             frame[ni, nj] = background[ni, nj] # Replace the pixel with the corresponding pixel from the background
@@ -110,5 +114,5 @@ def Launch_Invisibility_cloak():
     cv2.destroyAllWindows() # Close all windows
 
 # ----------------------------------------------------------------------------------------------------------------------------
-Launch_Invisibility_cloak()  # Launch the camera and detect the object in the image captured by the camera
+# Launch_Invisibility_cloak()  # Launch the camera and detect the object in the image captured by the camera
 # ----------------------------------------------------------------------------------------------------------------------------

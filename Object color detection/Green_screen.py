@@ -7,13 +7,13 @@ from Fonctions import * # import all functions from Fonctions.py
 # ----------------------------------------------------------------------------------------------------------------------------
 def Green_screen(frame, points, background, mask):
     """ Apply green screen effect to the detected object
-    Parameters:
+    Parameters
     ----------
     - frame : frame to apply the green screen effect to it
     - points : list of the points of the object detected
     - background : background to replace the object with it
     - mask : mask of the object detected
-    Returns:
+    Returns
     -------
     - background : background with the green screen effect applied to it
     """
@@ -21,12 +21,15 @@ def Green_screen(frame, points, background, mask):
     x, y = int(points[0][0] * 10), int(points[0][1] * 10) # Get the coordinates of the object
 
     # Extract dimensions of the object from the mask
-    mask = cv2.resize(mask, (0, 0), fx=10, fy=10) # Extract dimensions of the object from the mask
+    mask = cv2.resize(mask, (0, 0), fx=10, fy=10) # Extract dimensions of the object from the Mask
+    # mask = resize_image(mask, 10,10) # Extract dimensions of the object from the Mask
     object_height, object_width = mask.shape[:2] # Extract dimensions of the object from the mask
 
     # Expand the mask
-    expanded_mask = expand_mask(mask, expansion_pixels) # Expand the mask by the number of pixels specified in expansion_pixels
-
+    if np.random.randint(0, 2) == 4: # Randomly choose whether to expand the mask or not to make the effect more realistic
+        expanded_mask = expand_mask(mask, expansion_pixels) # Expand the mask by the number of pixels specified in expansion_pixels
+    else:
+        expanded_mask = mask
     # Ensure the indices are within the valid range
     y_start = max(0, y - object_height - expansion_pixels) # Ensure the indices are within the valid range
     y_end = min(frame.shape[0], y + object_height + expansion_pixels) # Ensure the indices are within the valid range
@@ -94,7 +97,6 @@ def Launch_Green_screen():
         if len(points) > 0: # if the object is detected 
             Green_screen_frame = Green_screen(frame,  points, background, mask) # Apply green screen effect to the detected object
  
-
             # Display the result
             cv2.imshow(' Green Screen ', Green_screen_frame) # Show the result
 
@@ -110,5 +112,5 @@ def Launch_Green_screen():
     cv2.destroyAllWindows() # Close all windows
 
 # ----------------------------------------------------------------------------------------------------------------------------
-Launch_Green_screen()  # Launch the camera and detect the object in the image captured by the camera
+# Launch_Green_screen()  # Launch the camera and detect the object in the image captured by the camera
 # ----------------------------------------------------------------------------------------------------------------------------
