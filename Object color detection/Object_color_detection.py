@@ -1,47 +1,73 @@
-import os
 import cv2
 import numpy as np
 from Fonctions import *
+# ----------------------------------------------------------------------------------------------------------------------------
 
+def object_color_detection(img, color_lo=np.array([95, 80, 50]), color_hi=np.array([115, 255, 255])):
+    """ Detect the object in the image base on its color and return the image with the object detected and the mask
     
-def object_color_detection(img , color) :
-    """Detects objects of a specific color in an image , and changes their color to black , and the rest to white.
-    this function uses the bgr_to_hsv function and the check_color function.
-      you need to provide the image and the color you want to detect."""
-    
-    if img is None: # Check if image is loaded
-        print('Could not open or find the image')
+    Parameters:
+    ----------
+    - img : image to detect the object in it
+
+    Returns:
+    -------
+    - img : image with the object detected
+    - mask : mask of the object detected
+    - points : list of the points of the object detected
+    """
+    hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV) # Convert the image from BGR to HSV
+
+    height, width = hsv.shape[0], hsv.shape[1] # Get the height and width of the image
+    mask = np.zeros((height, width), dtype=np.uint8)  # Change the data type to uint8
+    points = [] # List of the points of the object detected
+
+    for i in in_range(height): # Iterate through the image
+        for j in in_range(width): # Iterate through the image
+            pixel = hsv[i, j] # Get the pixel value
+            if check_color(pixel, color_lo, color_hi): # Check if the pixel is in the range of the color
+                mask[i, j] = 255  # set to white
+                if abs(i - j) > 30:  
+                    points.append((i, j)) # Add the point to the list
+
+    img[mask == 255] = 255 # Set the pixels to white
+    img[mask == 0] = 0 # Set the pixels to black
+ 
+    return mask, img, points # Return the mask, the image with the object detected and the points of the object detected
+
+def launch_object_color_detection():
+    cap = cv2.VideoCapture(0)
+    if not cap.isOpened():
+        print("Erreur de capture ")
         exit(0)
-    hsv = bgr_to_hsv(img)  # Convert image to HSV color space
 
-    # Define lower and upper limits of what we call "red"
-    color_lo, color_hi = color_to_hsv_range(color) # Get HSV range for red color
-    # color_lo = np.array([0, 100, 100])
-    # color_hi = np.array([10, 255, 255])
-    height , width  = hsv.shape[0] , hsv.shape[1] # Get image dimensions
-    mask = np.zeros((height, width ), dtype=bool) # Initialize mask
+    while cap.isOpened():
+        ret, frame = cap.read()
+        frame = cv2.flip(frame, 1)
 
-    # Iterate through each pixel and apply the condition
-    for i in in_range(hsv.shape[0]): # Iterate through each pixel
-        for j in in_range(hsv.shape[1]): # Iterate through each pixel
-            pixel = hsv[i, j] # Get pixel color
-            if check_color(pixel , color_lo , color_hi): # Check condition 
-                mask[i, j] = True # Set pixel to True if condition is satisfied
-    img_org = img.copy()  # Make a copy of the original image
-    # Change image to black where we found the color
-    img[mask] = 0  # Set black color
-    img_org[~mask] = 255
-    # The rest to white
-    img[~mask] = 255 # Set white color 
-    return img , img_org
+        if not ret:
+            print("Error in image read ")
+            break
+        org_frame = frame.copy()
+        mask, img, points = object_color_detection(frame)
+
+        if len(points) > 0:
+            print("points:", points[0]) 
+            cv2.circle(org_frame, (points[0][1], points[0][0]), 120, (0, 255, 0), 5)  # Corrected the order of points
+            cv2.putText(org_frame, "x: {}, y: {}".format(points[0][1], points[0][0]),
+                        (10, img.shape[0] - 10), cv2.FONT_HERSHEY_SIMPLEX, 1.25, (0, 255, 0), 4)
+
+        cv2.imshow('Detection result', org_frame) # Show the result
+
+        if mask is not None:
+            cv2.imshow('mask', mask) # Show the mask
+
+        if cv2.waitKey(20) & 0xFF == ord('q'): # Press q to exit
+            break 
+
+    cap.release() # Release the camera
+    cv2.destroyAllWindows() # Close all windows
 
 # ----------------------------------------------------------------------------------------------------------------------------
-# Load image
-# img = cv2.imread('Object color detection/Images/red-sedan-car.jpg' , cv2.IMREAD_COLOR)
-# color = [0 , 0 , 255] # red color
-# img = object_color_detection(img ,color)
-# # Show image
-# cv2.imshow('image', img)
-# cv2.waitKey(0)
-# cv2.destroyAllWindows()
+# launch_object_color_detection() # Launch the camera and detect the object in the image captured by the camera
 # ----------------------------------------------------------------------------------------------------------------------------
