@@ -66,7 +66,7 @@ def Launch_Green_screen():
         exit(0) # Exit the program
 
     # Load the green screen background image
-    background = cv2.imread('Images/Green_screen.png')  # Replace with the path to your image
+    background = cv2.imread('Object color detection/Images/Green_screen.png')  # Replace with the path to your image
 
     while cap.isOpened():
         ret, frame = cap.read()
