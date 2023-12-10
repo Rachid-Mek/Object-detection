@@ -21,12 +21,13 @@ def Green_screen(frame, points, background, mask):
     x, y = int(points[0][0] * 10), int(points[0][1] * 10) # Get the coordinates of the object
 
     # Extract dimensions of the object from the mask
-    mask = cv2.resize(mask, (0, 0), fx=10, fy=10) # Extract dimensions of the object from the Mask
+    mask = resize_image(mask, (10,10)) # Extract dimensions of the object from the Mask
+    # mask = resize_image_2d(mask, 10)
     # mask = resize_image(mask, 10,10) # Extract dimensions of the object from the Mask
     object_height, object_width = mask.shape[:2] # Extract dimensions of the object from the mask
 
     # Expand the mask
-    if np.random.randint(0, 2) == 4: # Randomly choose whether to expand the mask or not to make the effect more realistic
+    if np.random.randint(0, 2) == 1: # Randomly choose whether to expand the mask or not to make the effect more realistic
         expanded_mask = expand_mask(mask, expansion_pixels) # Expand the mask by the number of pixels specified in expansion_pixels
     else:
         expanded_mask = mask
@@ -40,11 +41,9 @@ def Green_screen(frame, points, background, mask):
     frame_region = frame[y_start:y_end, x_start:x_end] # Get the exact region of interest in the frame
 
     # Ensure the background has the correct size
-    background = cv2.resize(background, (frame.shape[1], frame.shape[0])) # Ensure the background has the correct size
-
+    background =resize_image(background, (frame.shape[1] , frame.shape[0])) # Ensure the background has the correct size
     # Resize the expanded mask to match the size of the frame region
-    expanded_mask = cv2.resize(expanded_mask, (x_end - x_start, y_end - y_start)) # Resize the expanded mask to match the size of the frame region
-
+    expanded_mask = resize_image(expanded_mask, (x_end - x_start, y_end - y_start)) # Resize the expanded mask to match the size of the frame region
     # Create a mask for the object
     mask_inv = np.zeros(expanded_mask.shape, dtype=np.uint8) # Create a mask for the object
     mask_inv[expanded_mask == 0] = 255 # Create a mask for the object
@@ -90,8 +89,7 @@ def Launch_Green_screen():
         ret, frame = cap.read()
         frame = cv2.flip(frame, 1)
 
-        resized_frame = cv2.resize(frame, (0, 0), fx=0.1, fy=0.1) # resize the frame to a lower resolution to speed up the processing
-
+        resized_frame = resize_image_3d(frame, 0.1) # resize the frame to a lower resolution to speed up the processing
         img, mask, points = detect_object(resized_frame) # detect the object in the frame
 
         if len(points) > 0: # if the object is detected 
@@ -101,7 +99,7 @@ def Launch_Green_screen():
             cv2.imshow(' Green Screen ', Green_screen_frame) # Show the result
 
         if mask is not None:  # Show the mask of the object detected
-            mask= cv2.resize(mask, (frame.shape[1], frame.shape[0])) # Resize the mask to match the size of the frame
+            mask = resize_image(mask, (frame.shape[1], frame.shape[0]))
             cv2.imshow('Mask', mask) # Show the mask of the object detected
         # cv2.imshow('Original Image', frame)
 
@@ -112,5 +110,5 @@ def Launch_Green_screen():
     cv2.destroyAllWindows() # Close all windows
 
 # ----------------------------------------------------------------------------------------------------------------------------
-# Launch_Green_screen()  # Launch the camera and detect the object in the image captured by the camera
+Launch_Green_screen()  # Launch the camera and detect the object in the image captured by the camera
 # ----------------------------------------------------------------------------------------------------------------------------

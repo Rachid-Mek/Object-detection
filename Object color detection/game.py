@@ -95,7 +95,7 @@ def game():
 
             # Vérifier la collision avec les obstacles
             collision1 = check_collision(car_pos_x, car_pos_y, car.shape[1], car.shape[0],
-                                         obstacle_pos_x, obstacle_pos_y, 30, 40)
+                                         obstacle_pos_x, obstacle_pos_y, 30, 40) 
 
             collision2 = check_collision(car_pos_x, car_pos_y, car.shape[1], car.shape[0],
                                          obstacle_pos_x2, obstacle_pos_y2, 30, 40)

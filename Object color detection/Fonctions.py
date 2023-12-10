@@ -1,3 +1,4 @@
+# ----------------------------------------------------------------------------------------------------------------------------
 import numpy as np
 # ----------------------------------------------------------------------------------------------------------------------------
 
@@ -17,7 +18,7 @@ def color_to_hsv_range(color):
     (array([  0,   0, 255]), array([ 10,  10, 255]))
      """
     # Define the RGB color
-    r, g, b = color
+    r, g, b = color 
 
     # Define a threshold for the HSV range
     threshold = 10
@@ -313,17 +314,16 @@ def Apply_blur(image, kernel_size):
     array([[[  0,   0,   0],
             [255, 255, 255]]], dtype=uint8)
     """
-    height, width, channels = image.shape
-    image_blurred = np.copy(image)
+    height, width, channels = image.shape # Get the dimensions of the image
+    image_blurred = np.copy(image) # Initialize the blurred image
     pad = kernel_size // 2  # Padding size based on the kernel size
 
     # Define the blur kernel
-    kernel = np.ones((kernel_size, kernel_size), dtype=np.float32)
-    kernel /= (kernel_size * kernel_size)
+    kernel = np.ones((kernel_size, kernel_size), dtype=np.float32) # Initialize the kernel with ones
+    kernel /= (kernel_size * kernel_size) # Normalize the kernel
 
-    # Pad the image to handle border pixels
     # padded_image = np.pad(image, ((pad, pad), (pad, pad), (0, 0)), mode='constant')
-    padded_image=pad_image(image,pad)
+    padded_image=pad_image(image,pad) # Pad the image with zeros , padding is an operation that adds a border around the image
 
     # Apply the blur filter
     for i in in_range(pad, height + pad): # Traverse rows
@@ -449,11 +449,11 @@ def detect_contours(binary_mask):
         # if abs(centroid_x-centroid_y)>25: # Check if the centroid is not on the diagonal
         centroids.append((centroid_x, centroid_y)) # Add the centroid to the list
 
-    return centroids
+    return centroids # Return the list of contours and centroids
 
  
 # ----------------------------------------------------------------------------------------------------------------------------
-def add_weighted(image1, alpha1, image2, alpha2):
+def add_weighted(image1, alpha1, image2, alpha2): 
     """
     Perform weighted addition of two images: output = alpha1 * image1 + alpha2 * image2 
     
@@ -484,22 +484,24 @@ def add_weighted(image1, alpha1, image2, alpha2):
  
 def find_contours(mask): 
     """Finds contours in a binary mask.
+
     Parameters
     -----------
     - mask (array): Binary mask to find contours in.
+
     Returns
     --------
     - list: List of contours.
     """
     # Find contours without using cv2
-    contours = []
-    current_contour = []
-    for i in range(mask.shape[0]):
-        for j in range(mask.shape[1]):
-            if mask[i, j] == 255:
-                current_contour.append((i, j))
-    contours.append(np.array(current_contour))
-    return contours
+    contours = [] # Initialize a list of contours
+    current_contour = [] # Initialize a new contour
+    for i in in_range(mask.shape[0]): # Traverse rows
+        for j in in_range(mask.shape[1]): # Traverse columns
+            if mask[i, j] == 255: # Check if the pixel is white
+                current_contour.append((i, j)) # Add the pixel to the current contour
+    contours.append(np.array(current_contour)) # Add the current contour to the list
+    return contours # Return the list of contours
 # ----------------------------------------------------------------------------------------------------------------------------
 # =============================================================================================================================
 # _____________________________________________________GAME____________________________________________________________________________________________________________________
@@ -510,10 +512,41 @@ import cv2
 car = cv2.imread('Object color detection/Images/car.png', cv2.IMREAD_UNCHANGED)
 
 def move_left(car_pos_x, step=10):
+    """Moves the car to the left by the specified number of pixels.
+
+    Parameters
+    -----------
+    - car_pos_x (int): Current x-coordinate of the car.
+    - step (int): Number of pixels to move the car by.
+
+    Returns
+    --------
+    - int: New x-coordinate of the car.
+    """
+
     car_pos_x -= step
     return max(car_pos_x, 0)
 
 def move_right(car_pos_x, window_width, step=10):
+    """Moves the car to the right by the specified number of pixels.
+
+    Parameters
+    -----------
+    - car_pos_x (int): Current x-coordinate of the car.
+    - window_width (int): Width of the window.
+    - step (int): Number of pixels to move the car by.
+
+    Returns
+    --------
+    - int: New x-coordinate of the car.
+
+    Examples
+    ---------
+    >>> move_right(0, 100, 10)
+    10
+    >>> move_right(100, 100, 10)
+    100
+    """
     car_pos_x += step
     return min(car_pos_x, window_width - car.shape[1])
 # ____________________________________________________________________________________________________________________________________________________________________________________
@@ -521,45 +554,45 @@ def move_right(car_pos_x, window_width, step=10):
 def resize_image_2d(image, scale_factor):
     """Resize a 2D image using a specified scale factor.
 
-    Parameters:
+    Parameters
     -----------
     - image (array): 2D image to be resized.
     - scale_factor (float): Scaling factor for resizing the image.
 
-    Returns:
+    Returns
     --------
     - array: Resized 2D image.
 
-    Examples:
+    Examples
     ---------
     >>> resize_image_2d(np.array([[0, 0, 0], [255, 255, 255]]), 0.1)
     array([[  0,   0,   0],
         [255, 255, 255]], dtype=uint8)
     """
-    height, width = image.shape[:2]
-    new_height = int(height * scale_factor)
-    new_width = int(width * scale_factor)
-    resized_image = np.zeros((new_height, new_width), dtype=np.uint8)
+    height, width = image.shape[:2] # Get the dimensions of the image
+    new_height = int(height * scale_factor) # Compute the new height
+    new_width = int(width * scale_factor) # Compute the new width
+    resized_image = np.zeros((new_height, new_width), dtype=np.uint8) # Initialize the resized image
     
-    for i in range(new_height):
-        for j in range(new_width):
-            resized_image[i, j] = image[int(i / scale_factor), int(j / scale_factor)]
+    for i in in_range(new_height): # Traverse rows
+        for j in in_range(new_width):   # Traverse columns
+            resized_image[i, j] = image[int(i / scale_factor), int(j / scale_factor)] # Resize the image
     
-    return resized_image
+    return resized_image    # Return the resized image
 
 def resize_image_3d(image, scale_factor):
     """Resize a 3D image using a specified scale factor.
 
-    Parameters:
+    Parameters
     -----------
     - image (array): 3D image to be resized.
     - scale_factor (float): Scaling factor for resizing the image.
 
-    Returns:
+    Returns
     --------
     - array: Resized 3D image.
 
-    Examples:
+    Examples
     ---------
     >>> resize_image_3d(np.array([[[0, 0, 0], [255, 255, 255]]]), 0.1)
     array([[[  0,   0,   0],
@@ -569,16 +602,40 @@ def resize_image_3d(image, scale_factor):
     new_height = int(height * scale_factor)
     new_width = int(width * scale_factor)
     
-    resized_image = np.zeros((new_height, new_width, image.shape[2]), dtype=np.uint8)
+    resized_image = np.zeros((new_height, new_width, image.shape[2]), dtype=np.uint8) # Initialize the resized image
     
     for i in in_range(new_height):
         for j in in_range(new_width):
             for k in in_range(image.shape[2]):
-                resized_image[i, j, k] = image[int(i / scale_factor), int(j / scale_factor), k]
+                resized_image[i, j, k] = image[int(i / scale_factor), int(j / scale_factor), k] # Resize the image
     
     return resized_image
 
 def check_collision(car_pos_x, car_pos_y, car_width, car_height, obstacle_pos_x, obstacle_pos_y, obstacle_width, obstacle_height):
+    """Checks if the car collides with the obstacle.
+
+    Parameters
+    -----------
+    - car_pos_x (int): x-coordinate of the car.
+    - car_pos_y (int): y-coordinate of the car.
+    - car_width (int): Width of the car.
+    - car_height (int): Height of the car.
+    - obstacle_pos_x (int): x-coordinate of the obstacle.
+    - obstacle_pos_y (int): y-coordinate of the obstacle.
+    - obstacle_width (int): Width of the obstacle.
+    - obstacle_height (int): Height of the obstacle.
+
+    Returns
+    --------
+    - bool: True if the car collides with the obstacle, False otherwise.
+
+    Examples
+    ---------
+    >>> check_collision(0, 0, 10, 10, 0, 0, 10, 10)
+    True
+    >>> check_collision(0, 0, 10, 10, 20, 20, 10, 10)
+    False
+    """
     # Coordonnées de la voiture et de l'obstacle
     car_left, car_right, car_top, car_bottom = car_pos_x, car_pos_x + car_width, car_pos_y, car_pos_y + car_height
     obstacle_left, obstacle_right, obstacle_top, obstacle_bottom = (
@@ -589,36 +646,84 @@ def check_collision(car_pos_x, car_pos_y, car_width, car_height, obstacle_pos_x,
     return (
         car_right > obstacle_left and car_left < obstacle_right and
         car_bottom > obstacle_top and car_top < obstacle_bottom
-    )
+    )  # Check if the car collides with the obstacle
 
+ 
 # ----------------------------------------------------------------------------------------------------------------------------
+
 import numpy as np
 
-def resize_image(image, new_width, new_height):
-    # Get the original dimensions
-    original_height, original_width = image.shape[:2]
+def resize_image(image, new_size):
+    """
+    Resize the input image to the specified new size.
 
-    # Create an empty array for the resized image
-    resized_image = np.zeros((new_height, new_width, 3), dtype=np.uint8)
+    Parameters
+    - image: The input image as a NumPy array.
+    - new_size: A tuple (width, height) specifying the new size of the image.
 
-    # Calculate the scaling factors for width and height
-    scale_x = new_width / original_width
-    scale_y = new_height / original_height
+    Returns
+    - The resized image as a NumPy array.
+    """
+    if len(image.shape) == 2:
+        # Grayscale image
+        return _resize_grayscale(image, new_size)
+    elif len(image.shape) == 3:
+        # Color image
+        return _resize_color(image, new_size)
+    else:
+        raise ValueError("Unsupported image shape. Only 2D or 3D images are supported.")
 
-    # Iterate through each pixel in the resized image and assign the corresponding pixel from the original image
-    for i in range(new_height):
-        for j in range(new_width):
-            original_i = int(i / scale_y)
-            original_j = int(j / scale_x)
+def _resize_grayscale(image, new_size):
+    """
+    Resize a grayscale image to the specified new size.
 
-            # Ensure that the indices are within the original image bounds
-            original_i = min(original_i, original_height - 1)
-            original_j = min(original_j, original_width - 1)
+    Parameters
+    - image: The input grayscale image as a NumPy array.
+    - new_size: A tuple (width, height) specifying the new size of the image.
 
-            # Assign the pixel value from the original image to the resized image
-            resized_image[i, j, :] = image[original_i, original_j, :]
+    Returns
+    - The resized grayscale image as a NumPy array.
+    """
+    new_width, new_height = new_size
+    resized_image = np.zeros((new_height, new_width), dtype=image.dtype)
+
+    for i in in_range(new_height):
+        for j in in_range(new_width):
+            x = j * (image.shape[1] - 1) / (new_width - 1) # Scale the x-coordinate
+            y = i * (image.shape[0] - 1) / (new_height - 1) # Scale the y-coordinate
+
+            x_low, y_low = int(np.floor(x)), int(np.floor(y)) # Get the lower bound
+            x_high, y_high = int(np.ceil(x)), int(np.ceil(y)) # Get the upper bound
+
+            x_lerp = x - x_low
+            y_lerp = y - y_low
+
+            top_left = image[y_low, x_low]
+            top_right = image[y_low, x_high]
+            bottom_left = image[y_high, x_low]
+            bottom_right = image[y_high, x_high]
+
+            interpolated_value = (1 - x_lerp) * (1 - y_lerp) * top_left + \
+                                 x_lerp * (1 - y_lerp) * top_right + \
+                                 (1 - x_lerp) * y_lerp * bottom_left + \
+                                 x_lerp * y_lerp * bottom_right
+
+            resized_image[i, j] = interpolated_value
 
     return resized_image
 
- 
+def _resize_color(image, new_size):
+    """
+    Resize a color image to the specified new size.
+
+    Parameters:
+    - image: The input color image as a NumPy array.
+    - new_size: A tuple (width, height) specifying the new size of the image.
+
+    Returns:
+    - The resized color image as a NumPy array.
+    """
+    channels = image.shape[2]
+    resized_channels = [_resize_grayscale(image[:, :, c], new_size) for c in in_range(channels)]
+    return np.stack(resized_channels, axis=2)
 # ----------------------------------------------------------------------------------------------------------------------------
