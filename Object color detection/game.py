@@ -70,12 +70,7 @@ def game():
         if obj_info and len(obj_info[2]) > 0:
             blurred_img, _, obj_coords = obj_info
             # reinitialiser la fenêtre du jeu avec le contour de l'image
-            fenetre = np.zeros_like(contour)
-            #copier le contour dans la fenêtre pixel par pixel
-            for i in range(contour.shape[0]):
-                for j in range(contour.shape[1]):
-                    for c in range(contour.shape[2]):
-                        fenetre[i, j, c] = contour[i, j, c] 
+            fenetre = contour.copy() 
             
             # Ajuster la position de la voiture pour ne pas dépasser les limites
             car_pos_x = max(0, min(car_pos_x, fenetre.shape[1] - car.shape[1]))
