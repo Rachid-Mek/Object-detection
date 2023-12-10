@@ -612,7 +612,6 @@ def resize_image_3d(image, scale_factor):
     return resized_image
 
 def check_collision(car_pos_x, car_pos_y, car_width, car_height, obstacle_pos_x, obstacle_pos_y, obstacle_width, obstacle_height):
-<<<<<<< HEAD
     """Checks if the car collides with the obstacle.
 
     Parameters
@@ -637,7 +636,6 @@ def check_collision(car_pos_x, car_pos_y, car_width, car_height, obstacle_pos_x,
     >>> check_collision(0, 0, 10, 10, 20, 20, 10, 10)
     False
     """
-=======
     '''
     Check if the car and the obstacle collide or not
 
@@ -663,7 +661,6 @@ def check_collision(car_pos_x, car_pos_y, car_width, car_height, obstacle_pos_x,
     '''
     
     
->>>>>>> b7c5c302856e59b017651c72618209c68c49f4b9
     # Coordonnées de la voiture et de l'obstacle
     car_left, car_right, car_top, car_bottom = car_pos_x, car_pos_x + car_width, car_pos_y, car_pos_y + car_height
     obstacle_left, obstacle_right, obstacle_top, obstacle_bottom = (
@@ -679,7 +676,6 @@ def check_collision(car_pos_x, car_pos_y, car_width, car_height, obstacle_pos_x,
  
 # ----------------------------------------------------------------------------------------------------------------------------
 
-import numpy as np
 
 def resize_image(image, new_size):
     """
@@ -739,7 +735,7 @@ def _resize_grayscale(image, new_size):
             resized_image[i, j] = interpolated_value
 
     return resized_image
-
+# ----------------------------------------------------------------------------------------------------------------------------
 def _resize_color(image, new_size):
     """
     Resize a color image to the specified new size.
