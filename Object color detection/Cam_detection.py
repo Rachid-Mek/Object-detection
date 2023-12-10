@@ -52,7 +52,8 @@ def Launch():
             break 
 
         # Resize the frame to a lower resolution for faster processing
-        resized_frame = cv2.resize(frame, (0, 0), fx=0.1, fy=0.1)
+        # resized_frame = cv2.resize(frame, (0, 0), fx=0.1, fy=0.1) 
+        resized_frame = resize_image_3d(frame, 0.1) # resize the frame to a lower resolution for faster processing
 
         img ,mask, points = detect_object(resized_frame) # detect the object in the image captured by the camera
 
@@ -62,7 +63,8 @@ def Launch():
             cv2.putText(frame, "x: {}, y: {}".format(points[0][0] * 10, points[0][1] * 10), (10, frame.shape[0] - 10), cv2.FONT_HERSHEY_SIMPLEX, 1.25, (0, 255, 0), 4)
             
         if mask is not None:  # if the mask is not empty
-            mask = cv2.resize(mask, (0, 0), fx=10, fy=10) # resize the mask
+            # mask = cv2.resize(mask, (0, 0), fx=10, fy=10) # resize the mask 
+            mask = resize_image_2d(mask, 10)
             cv2.imshow('mask', mask) # show the mask
         cv2.imshow('Detection', frame) # show the frame with the object detected
         
