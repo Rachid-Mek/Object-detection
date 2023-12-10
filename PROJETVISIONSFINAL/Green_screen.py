@@ -66,7 +66,7 @@ def Launch_Green_screen():
         exit(0) # Exit the program
 
     # Load the green screen background image
-    background = cv2.imread('C:/Users/User/Desktop/PROJETVISIONS/Images/Green_screen.png')  # Replace with the path to your image
+    background = cv2.imread('Object color detection/Images/Green_screen.png')  # Replace with the path to your image
 
     while cap.isOpened():
         ret, frame = cap.read()
@@ -93,5 +93,5 @@ def Launch_Green_screen():
     cv2.destroyAllWindows() # Close all windows
 
 # ----------------------------------------------------------------------------------------------------------------------------
-#Launch_Green_screen()  # Launch the camera and detect the object in the image captured by the camera
+# Launch_Green_screen()  # Launch the camera and detect the object in the image captured by the camera
 # ----------------------------------------------------------------------------------------------------------------------------

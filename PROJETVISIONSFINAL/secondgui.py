@@ -509,6 +509,9 @@ def Laplacien(image):
     cv2.destroyAllWindows()
 # Erode filter fonction
 def Erode(image):
+    global structure, morph_type
+    structure = 'rect'
+    morph_type = 'open'
     global img 
     img = image
     global height, width
@@ -539,6 +542,9 @@ def Erode(image):
     cv2.destroyAllWindows()
 # Dilate filter fonction
 def Dilate(image):
+    global structure, morph_type
+    structure = 'rect'
+    morph_type = 'open'
     global img 
     img = image
     global height, width
@@ -568,6 +574,9 @@ def Dilate(image):
     cv2.destroyAllWindows()
 # Morphex filter fonction
 def Morphex(image):
+    global structure, morph_type
+    structure = 'rect'
+    morph_type = 'open'
     global img 
     img = image
     global height, width
@@ -665,7 +674,7 @@ def newwind(image):
 
     if image is None:
        print('TEST FAIL',image) 
-       image= cv2.imread('C:/Users/User/Desktop/fifi/Master-2/vision/Tkinter-Designer-master/build/imgprojet.jpg', cv2.IMREAD_GRAYSCALE)
+       image= cv2.imread('imgprojet.jpg', cv2.IMREAD_GRAYSCALE)
          
     else :
         print('TEST',image)

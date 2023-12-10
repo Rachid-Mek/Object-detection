@@ -10,7 +10,7 @@ from tkinter import  Tk, Canvas, Entry, Text, Button, PhotoImage, filedialog,fon
 from pathlib import Path
 
 OUTPUT_PATH = Path(__file__).parent
-ASSETS_PATH = OUTPUT_PATH / Path(r"C:\Users\User\Desktop\fifi\Master-2\vision\Tkinter-Designer-master\build\assets\frame0")
+ASSETS_PATH = OUTPUT_PATH / Path(r"assets\frame0")
 
 
 def relative_to_assets(path: str) -> Path:
@@ -166,10 +166,27 @@ button_3 = Button(
 )
 button_3.place(
     x=9.0,
+    y=500.0,
+    width=210.0,
+    height=50.0
+)
+
+button_image_80= PhotoImage(
+    file=relative_to_assets("button_75.png"))
+button_80 = Button(
+    image=button_image_80,
+    borderwidth=0,
+    highlightthickness=0,
+    command=lambda: Launch(),
+    relief="flat"
+)
+button_80.place(
+    x=9.0,
     y=587.0,
     width=210.0,
     height=50.0
 )
+
 
 image_image_3 = PhotoImage(
     file=relative_to_assets("image_3.png"))

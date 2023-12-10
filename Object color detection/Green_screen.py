@@ -93,5 +93,5 @@ def Launch_Green_screen():
     cv2.destroyAllWindows() # Close all windows
 
 # ----------------------------------------------------------------------------------------------------------------------------
-Launch_Green_screen()  # Launch the camera and detect the object in the image captured by the camera
+# Launch_Green_screen()  # Launch the camera and detect the object in the image captured by the camera
 # ----------------------------------------------------------------------------------------------------------------------------

@@ -14,7 +14,7 @@ def game():
         exit(0)
 
     # Charger l'image de la voiture avec canal alpha
-    car = cv2.imread('C:/Users/User/Desktop/PROJETVISIONS/Images/car.png', cv2.IMREAD_UNCHANGED)
+    car = cv2.imread('Object color detection/Images/car.png', cv2.IMREAD_UNCHANGED)
 
     # Extraire le canal alpha de l'image de la voiture (le contour noir)
     alpha_channel = np.zeros(car.shape[:2], dtype=car.dtype)
@@ -23,7 +23,7 @@ def game():
             alpha_channel[i, j] = car[i, j, 3] 
 
     # Charger l'image de contour
-    contour = cv2.imread('C:/Users/User/Desktop/PROJETVISIONS/Images/contour.jpg', cv2.IMREAD_COLOR)
+    contour = cv2.imread('Object color detection/Images/contour.jpg', cv2.IMREAD_COLOR)
     
     # Resize de l'image de contour
     contour = resize_image_3d(contour, 0.4)
