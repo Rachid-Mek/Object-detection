@@ -492,11 +492,11 @@ morph_values = [ "open", "close"]
     
 imgRes_l = []
 
-"""
+
 #--CV2 UI------------------------------------------------------------------------------------------------------------------------------------------------------
 
 # Create a window and trackbar
-cv2.namedWindow('result_l',  cv2.WINDOW_NORMAL)
+#cv2.namedWindow('result_l',  cv2.WINDOW_NORMAL)
 cv2.namedWindow('Trackbars',  cv2.WINDOW_NORMAL)
 # Set the desired width and height for the window
 new_width = 300
@@ -514,10 +514,6 @@ cv2.createTrackbar('Filter', 'Trackbars', 0, len(label_values) - 1, changeFilter
 cv2.createTrackbar('Struct', 'Trackbars', 0, len(struct_values) - 1, changeStructure)
 cv2.createTrackbar('Morph', 'Trackbars', 0, len(morph_values) - 1, changeMorphType)
 
-filter(cv2.imread('Filters/Images/img_projet2.jpg', cv2.IMREAD_GRAYSCALE))
-
-
-
+filter(cv2.imread('C:/Users/User/Desktop/PROJETVISIONS/imgprojet.jpg', cv2.IMREAD_GRAYSCALE))
 cv2.waitKey(0)
 cv2.destroyAllWindows()
-"""
