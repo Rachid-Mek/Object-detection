@@ -5,54 +5,54 @@ from Fonctions import * # import all functions from Fonctions.py
 
  
 # ----------------------------------------------------------------------------------------------------------------------------
-def invisibility_cloak(frame, background, points, mask):
-    """ Make the object disappear from the frame and replace it with the background
+# def invisibility_cloak(frame, background, points, mask):
+#     """ Make the object disappear from the frame and replace it with the background
     
-    Parameters
-    ----------
-    - frame : frame to make the object disappear from it
-    - background : background to replace the object with it
-    - points : list of the points of the object detected
-    - mask : mask of the object detected
+#     Parameters
+#     ----------
+#     - frame : frame to make the object disappear from it
+#     - background : background to replace the object with it
+#     - points : list of the points of the object detected
+#     - mask : mask of the object detected
 
-    Returns
-    -------
-    - frame : frame with the object disappeared
+#     Returns
+#     -------
+#     - frame : frame with the object disappeared
 
 
-    """
-    x, y = int(points[0][0] * 10), int(points[0][1] * 10) # Get the coordinates of the object
+#     """
+#     x, y = int(points[0][0] * 10), int(points[0][1] * 10) # Get the coordinates of the object
 
-    mask = resize_image_2d(mask, 10) # Extract dimensions of the object from the mask 
+#     mask = resize_image_2d(mask, 10) # Extract dimensions of the object from the mask 
 
-    w_frame, h_frame = frame.shape[:2] # Extract dimensions of the frame
-    expand_mask(mask ,2)
-    for i in in_range(w_frame): # Iterate through the frame
-        for j in in_range(h_frame): # Iterate through the frame
-            if mask[i, j] == 255: # Check if the pixel is part of the object
-                frame[i, j] = background[i, j] # Replace the pixel with the corresponding pixel from the background
+#     w_frame, h_frame = frame.shape[:2] # Extract dimensions of the frame
+#     expand_mask(mask ,2)
+#     for i in in_range(w_frame): # Iterate through the frame
+#         for j in in_range(h_frame): # Iterate through the frame
+#             if mask[i, j] == 255: # Check if the pixel is part of the object
+#                 frame[i, j] = background[i, j] # Replace the pixel with the corresponding pixel from the background
             
-                # for di in in_range(-7, 8): # Iterate through the frame
-                #     for dj in in_range(-7, 8): # Iterate through the frame 
-                #             ni, nj = i + di, j + dj # Get the new coordinates
-                #             if 0 <= ni < w_frame and 0 <= nj < h_frame and mask[ni, nj] != 255: # Check if the pixel is not part of the object
-                #                 frame[ni, nj] = background[ni, nj] # Replace the pixel with the corresponding pixel from the background
+#                 # for di in in_range(-7, 8): # Iterate through the frame
+#                 #     for dj in in_range(-7, 8): # Iterate through the frame 
+#                 #             ni, nj = i + di, j + dj # Get the new coordinates
+#                 #             if 0 <= ni < w_frame and 0 <= nj < h_frame and mask[ni, nj] != 255: # Check if the pixel is not part of the object
+#                 #                 frame[ni, nj] = background[ni, nj] # Replace the pixel with the corresponding pixel from the background
 
-    return frame # Return the frame with the object disappeared
+#     return frame # Return the frame with the object disappeared
  
 # ----------------------------------------------------------------------------------------------------------------------------
-# def invisibility_cloak(frame, background, points, mask):
-#     x, y = int(points[0][0] * 10), int(points[0][1] * 10)
+def invisibility_cloak(frame, background, points, mask):
+    x, y = int(points[0][0] * 10), int(points[0][1] * 10)
 
-#     # Extract dimensions of the object from the mask 
-#     mask = cv2.resize(mask, (0, 0), fx=10, fy=10)
-#     w,h= mask.shape[:2]    
-#     w_frame, h_frame = frame.shape[:2]
-#     for i in range(w_frame):
-#         for j in range(h_frame):
-#             if mask[i,j] == 255:
-#                 frame[i,j] = background[i ,j]
-#     return frame 
+    # Extract dimensions of the object from the mask 
+    mask = cv2.resize(mask, (0, 0), fx=10, fy=10)
+    w,h= mask.shape[:2]    
+    w_frame, h_frame = frame.shape[:2]
+    for i in range(w_frame):
+        for j in range(h_frame):
+            if mask[i,j] == 255:
+                frame[i,j] = background[i ,j]
+    return frame 
 
 # ----------------------------------------------------------------------------------------------------------------------------
 def capture_background(): 
@@ -113,5 +113,5 @@ def Launch_Invisibility_cloak():
     cv2.destroyAllWindows() # Close all windows
 
 # ----------------------------------------------------------------------------------------------------------------------------
-Launch_Invisibility_cloak()  # Launch the camera and detect the object in the image captured by the camera
+#Launch_Invisibility_cloak()  # Launch the camera and detect the object in the image captured by the camera
 # ----------------------------------------------------------------------------------------------------------------------------

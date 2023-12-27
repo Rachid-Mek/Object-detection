@@ -509,7 +509,7 @@ def find_contours(mask):
 # =============================================================================================================================
 import cv2
 # _____________________________________________________GAME____________________________________________________________________________________________________________________
-car = cv2.imread('Object color detection/Images/car.png', cv2.IMREAD_UNCHANGED)
+car = cv2.imread('PROJETVISIONS/Images/car.png', cv2.IMREAD_UNCHANGED)
 
 def move_left(car_pos_x, step=10):
     """Moves the car to the left by the specified number of pixels.

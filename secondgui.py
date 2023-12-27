@@ -1,3 +1,7 @@
+
+
+from pathlib import Path
+from tkinter import Tk, Canvas, Entry, Text, Button, PhotoImage,font
 import cv2
 import numpy as np
 
@@ -7,6 +11,7 @@ import numpy as np
 def changeTh(value):
     global th
     th = value
+    print('CHANGING TH')
     filter()
     
 # for all filters    
@@ -410,12 +415,11 @@ def filter():
 
     # Convert the result to a NumPy array for displaying
     imgRes_l_np = np.array(imgRes_l, dtype=np.uint8)
-    cv2.imshow('result_l', imgRes_l_np)
+    cv2.imshow('result_2', imgRes_l_np)
 
 
-#--Run------------------------------------------------------------------------------------------------------------------------------------------------------
 
-# Initialize global variables
+# Initialize the global variables
 th = 130
 type = 2
 sizeDilate = 1
@@ -423,50 +427,433 @@ sizeErode = 1
 sizeMorphEx = 1
 
 # parameters
-method = 'gaussien'
+
 structure = 'rect'
 morph_type = 'open'
 
 label_values = ["gaussien", "laplacien", "erode", "dilate","morphex", "sobel", "emboss"]
 struct_values = [ "rect", "cross"]
 morph_values = [ "open", "close"]
-
-# img = cv2.imread('photo.jpeg', cv2.IMREAD_GRAYSCALE)
-img = cv2.imread('Filters/Images/img_projet2.jpg', cv2.IMREAD_GRAYSCALE)
-
-height, width = img.shape[:2]
-
-if img is None:
-    print("erreur de chargement")
-    exit(0)
-    
 imgRes_l = []
 
 
-#--CV2 UI------------------------------------------------------------------------------------------------------------------------------------------------------
 
-# Create a window and trackbar
-cv2.namedWindow('result_l',  cv2.WINDOW_NORMAL)
-cv2.namedWindow('Trackbars',  cv2.WINDOW_NORMAL)
-# Set the desired width and height for the window
-new_width = 300
-new_height = 200
-
-# Resize the window
-cv2.resizeWindow('Trackbars', new_width, new_height)
-
-cv2.createTrackbar("Threshold", "Trackbars", th, 255, changeTh)
-cv2.createTrackbar("Type", "Trackbars", type, 4, changeType)
-cv2.createTrackbar("sizeErode", "Trackbars", sizeErode, 21, change_erode_size)
-cv2.createTrackbar("sizeDilate", "Trackbars", sizeDilate, 21, change_dilate_size)
-cv2.createTrackbar("sizeMorph", "Trackbars", sizeMorphEx, 21, change_morphEx_size)
-cv2.createTrackbar('Filter', 'Trackbars', 0, len(label_values) - 1, changeFilter)
-cv2.createTrackbar('Struct', 'Trackbars', 0, len(struct_values) - 1, changeStructure)
-cv2.createTrackbar('Morph', 'Trackbars', 0, len(morph_values) - 1, changeMorphType)
-
-filter()
+OUTPUT_PATH = Path(__file__).parent
+ASSETS_PATH = OUTPUT_PATH / Path(r"assets/frame0")
 
 
+def relative_to_assets(path: str) -> Path:
+    return ASSETS_PATH / Path(path)
 
-cv2.waitKey(0)
-cv2.destroyAllWindows()
+# gaussian filter fonction 
+def gaussian(image):
+    global img 
+    img = image
+    global height, width
+    height, width = img.shape[:2]
+    global method 
+    method = 'gaussien'
+    global th
+    # Create a window and trackbar
+    #cv2.namedWindow('result_l',  cv2.WINDOW_NORMAL)
+    cv2.namedWindow('Trackbars',  cv2.WINDOW_NORMAL)
+    # Set the desired width and height for the window
+    new_width = 300
+    new_height = 200
+
+    # Resize the window
+    cv2.resizeWindow('Trackbars', new_width, new_height)
+
+    cv2.createTrackbar("Threshold", "Trackbars", th, 255, changeTh)
+    cv2.createTrackbar("Type", "Trackbars", type, 4, changeType)
+
+    # Create window 2
+
+    cv2.namedWindow('result_2',  cv2.WINDOW_NORMAL)
+    cv2.resizeWindow('result_2', 400, 400) 
+    cv2.moveWindow('result_2', 900, 100)
+
+    #resize image 
+    filter()
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()
+
+# Laplacien filter fonction
+def Laplacien(image):
+    global img 
+    img = image
+    global height, width
+    height, width = img.shape[:2]
+    global method 
+    method =  'laplacien'
+    # Create a window and trackbar
+    #cv2.namedWindow('result_l',  cv2.WINDOW_NORMAL)
+    cv2.namedWindow('Trackbars',  cv2.WINDOW_NORMAL)
+    # Set the desired width and height for the window
+    new_width = 300
+    new_height = 200
+
+    # Resize the window
+    cv2.resizeWindow('Trackbars', new_width, new_height)
+    cv2.createTrackbar("Threshold", "Trackbars", th, 255, changeTh)
+    cv2.createTrackbar("Type", "Trackbars", type, 4, changeType)
+    # Create window 2
+
+    cv2.namedWindow('result_2',  cv2.WINDOW_NORMAL)
+    cv2.resizeWindow('result_2', 400, 400) 
+    cv2.moveWindow('result_2', 900, 100)
+
+    #resize image 
+    filter()
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()
+# Erode filter fonction
+def Erode(image):
+    global structure, morph_type
+    structure = 'rect'
+    morph_type = 'open'
+    global img 
+    img = image
+    global height, width
+    height, width = img.shape[:2]
+    global method 
+    method =  'erode'
+    cv2.namedWindow('Trackbars',  cv2.WINDOW_NORMAL)
+    new_width = 300
+    new_height = 200
+
+    # Resize the window
+    cv2.resizeWindow('Trackbars', new_width, new_height)
+
+    cv2.createTrackbar("Threshold", "Trackbars", th, 255, changeTh)
+    cv2.createTrackbar("Type", "Trackbars", type, 4, changeType)
+    cv2.createTrackbar('Struct', 'Trackbars', 0, len(struct_values) - 1, changeStructure)
+    cv2.createTrackbar("sizeErode", "Trackbars", sizeErode, 21, change_erode_size)
+
+    # Create window 2
+
+    cv2.namedWindow('result_2',  cv2.WINDOW_NORMAL)
+    cv2.resizeWindow('result_2', 400, 400) 
+    cv2.moveWindow('result_2', 900, 100)
+
+    #resize image 
+    filter()
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()
+# Dilate filter fonction
+def Dilate(image):
+    global structure, morph_type
+    structure = 'rect'
+    morph_type = 'open'
+    global img 
+    img = image
+    global height, width
+    height, width = img.shape[:2]
+    global method 
+    method =  'dilate'
+
+    cv2.namedWindow('Trackbars',  cv2.WINDOW_NORMAL)
+    new_width = 300
+    new_height = 200
+
+    # Resize the window
+    cv2.resizeWindow('Trackbars', new_width, new_height)
+
+    cv2.createTrackbar("Threshold", "Trackbars", th, 255, changeTh)
+    cv2.createTrackbar("Type", "Trackbars", type, 4, changeType)
+    cv2.createTrackbar('Struct', 'Trackbars', 0, len(struct_values) - 1, changeStructure)
+    cv2.createTrackbar("sizeDilate", "Trackbars", sizeDilate, 21, change_dilate_size)
+
+    cv2.namedWindow('result_2',  cv2.WINDOW_NORMAL)
+    cv2.resizeWindow('result_2', 400, 400) 
+    cv2.moveWindow('result_2', 900, 100)
+
+    #resize image 
+    filter()
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()
+# Morphex filter fonction
+def Morphex(image):
+    global structure, morph_type
+    structure = 'rect'
+    morph_type = 'open'
+    global img 
+    img = image
+    global height, width
+    height, width = img.shape[:2]
+    global method 
+    method =  'morphex'
+    cv2.namedWindow('Trackbars',  cv2.WINDOW_NORMAL)
+    new_width = 300
+    new_height = 200
+
+    # Resize the window
+    cv2.resizeWindow('Trackbars', new_width, new_height)
+
+    cv2.createTrackbar("Threshold", "Trackbars", th, 255, changeTh)
+    cv2.createTrackbar("Type", "Trackbars", type, 4, changeType)
+    cv2.createTrackbar('Struct', 'Trackbars', 0, len(struct_values) - 1, changeStructure)
+    cv2.createTrackbar('Morph', 'Trackbars', 0, len(morph_values) - 1, changeMorphType)
+    cv2.createTrackbar("sizeMorph", "Trackbars", sizeMorphEx, 21, change_morphEx_size)
+
+    # Create window 2
+
+    cv2.namedWindow('result_2',  cv2.WINDOW_NORMAL)
+    cv2.resizeWindow('result_2', 400, 400) 
+    cv2.moveWindow('result_2', 900, 100)
+
+    #resize image 
+    filter()
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()
+# Sobel filter fonction
+def Sobel(image):
+    global img 
+    img = image
+    global height, width
+    height, width = img.shape[:2]
+    global method 
+    method =  'sobel'
+    # Create a window and trackbar
+    #cv2.namedWindow('result_l',  cv2.WINDOW_NORMAL)
+    cv2.namedWindow('Trackbars',  cv2.WINDOW_NORMAL)
+    # Set the desired width and height for the window
+    new_width = 300
+    new_height = 200
+
+    # Resize the window
+    cv2.resizeWindow('Trackbars', new_width, new_height)
+
+    cv2.createTrackbar("Threshold", "Trackbars", th, 255, changeTh)
+    cv2.createTrackbar("Type", "Trackbars", type, 4, changeType)
+
+    # Create window 2
+
+    cv2.namedWindow('result_2',  cv2.WINDOW_NORMAL)
+    cv2.resizeWindow('result_2', 400, 400) 
+    cv2.moveWindow('result_2', 900, 100)
+
+    #resize image 
+    filter()
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()
+# Emboss filter fonction
+def Emboss(image):
+    global img 
+    img = image
+    global height, width
+    height, width = img.shape[:2]
+    global method 
+    method =  'emboss'
+    # Create a window and trackbar
+    #cv2.namedWindow('result_l',  cv2.WINDOW_NORMAL)
+    cv2.namedWindow('Trackbars',  cv2.WINDOW_NORMAL)
+    # Set the desired width and height for the window
+    new_width = 300
+    new_height = 200
+
+    # Resize the window
+    cv2.resizeWindow('Trackbars', new_width, new_height)
+
+    cv2.createTrackbar("Threshold", "Trackbars", th, 255, changeTh)
+    cv2.createTrackbar("Type", "Trackbars", type, 4, changeType)
+
+    # Create window 2
+
+    cv2.namedWindow('result_2',  cv2.WINDOW_NORMAL)
+    cv2.resizeWindow('result_2', 400, 400) 
+    cv2.moveWindow('result_2', 900, 100)
+
+    #resize image 
+    filter()
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()
+from tkinter import Toplevel
+# Newwind function takes the uploaded image as input and applies a chosen filter to it
+def newwind(image):
+
+    if image is None:
+       print('TEST FAIL',image) 
+       image= cv2.imread('imgprojet.jpg', cv2.IMREAD_GRAYSCALE)
+         
+    else :
+        print('TEST',image)
+        image=cv2.imread(image, cv2.IMREAD_GRAYSCALE)
+        
+    #It oppens a second GUI that lets the user choose the filter then shows
+    # the trackbars and image changes 
+
+    
+    window2 = Toplevel()
+
+    window2.geometry("700x700")
+    window2.configure(bg = "#45BFD7")
+
+
+    canvas = Canvas(
+        window2,
+        bg = "#45BFD7",
+        height = 700,
+        width = 700,
+        bd = 0,
+        highlightthickness = 0,
+        relief = "ridge"
+    )
+
+    canvas.place(x = 0, y = 0)
+    canvas.create_rectangle(
+        0.0,
+        0.0,
+        816.0,
+        73.0,
+        fill="#312D62",
+        outline="")
+
+    canvas.create_text(
+        44.0,
+        12.0,
+        anchor="nw",
+        text="Project dashbord",
+        fill="#FFFFFF",
+        font=("JollyLodger", 40 * -1)
+    )
+
+    canvas.create_text(
+        171.0,
+        90.0,
+        anchor="nw",
+        text="Choose the desired filter ",
+        fill="#F88D0E",
+        font=("JollyLodger", 50 * -1)
+    )
+
+    image_image_2_1 = PhotoImage(
+        file=relative_to_assets("image_2_1.png"))
+    image_2_1 = canvas.create_image(
+        350.0,
+        473.0,
+        image=image_image_2_1
+    )
+
+    button_image_2_1 = PhotoImage(
+        file=relative_to_assets("button_2_1.png"))
+    button_2_1 = Button(
+        window2,
+        image=button_image_2_1,
+        borderwidth=0,
+        highlightthickness=0,
+        command=lambda: Sobel(image),
+        relief="flat"
+    )
+    button_2_1.place(
+        x=430.0,
+        y=460.0,
+        width=240.0,
+        height=66.0
+    )
+
+    button_image_2_2 = PhotoImage(
+        file=relative_to_assets("button_2_2.png"))
+    button_2_2 = Button(
+        window2,
+        image=button_image_2_2,
+        borderwidth=0,
+        highlightthickness=0,
+        command=lambda: Emboss(image),
+        relief="flat"
+    )
+    button_2_2.place(
+        x=241.0,
+        y=572.0,
+        width=240.0,
+        height=66.0
+    )
+
+    button_image_2_3 = PhotoImage(
+        file=relative_to_assets("button_2_3.png"))
+    button_2_3 = Button(
+        window2,
+        image=button_image_2_3,
+        borderwidth=0,
+        highlightthickness=0,
+        command=lambda: Morphex(image),
+        relief="flat"
+    )
+    button_2_3.place(
+        x=34.0,
+        y=460.0,
+        width=240.0,
+        height=66.0
+    )
+
+    button_image_2_4 = PhotoImage(
+        file=relative_to_assets("button_2_4.png"))
+    button_2_4 = Button(
+        window2,
+        image=button_image_2_4,
+        borderwidth=0,
+        highlightthickness=0,
+        command=lambda: Dilate(image),
+        relief="flat"
+    )
+    button_2_4.place(
+        x=430.0,
+        y=313.0,
+        width=240.0,
+        height=66.0
+    )
+
+    button_image_2_5 = PhotoImage(
+        file=relative_to_assets("button_2_5.png"))
+    button_2_5 = Button(
+        window2,
+        image=button_image_2_5,
+        borderwidth=0,
+        highlightthickness=0,
+        command=lambda: Erode(image),
+        relief="flat"
+    )
+    button_2_5.place(
+        x=29.0,
+        y=313.0,
+        width=240.0,
+        height=66.0
+    )
+
+    button_image_2_6 = PhotoImage(
+        file=relative_to_assets("button_2_6.png"))
+    button_2_6 = Button(
+        window2,
+        image=button_image_2_6,
+        borderwidth=0,
+        highlightthickness=0,
+        command=lambda: Laplacien(image),
+        relief="flat"
+    )
+    button_2_6.place(
+        x=430.0,
+        y=166.0,
+        width=240.0,
+        height=66.0
+    )
+
+    button_image_2_7 = PhotoImage(
+        file=relative_to_assets("button_2_7.png"))
+    button_2_7 = Button(
+        window2,
+        image=button_image_2_7,
+        borderwidth=0,
+        highlightthickness=0,
+        command=lambda: gaussian(image),
+        relief="flat"
+    )
+    button_2_7.place(
+        x=29.0,
+        y=173.0,
+        width=240.0,
+        height=66.0
+    )
+    window2.resizable(False, False)
+    window2.mainloop()
+
+#newwind('C:/Users/User/Desktop/fifi/Master-2/vision/Tkinter-Designer-master/build/imgprojet.jpg')

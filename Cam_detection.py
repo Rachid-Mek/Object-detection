@@ -28,6 +28,7 @@ def detect_object(img):
     Kernel_size = 5 # kernel size for the blur which is the size of the filter used for the convolution
     # img = bgr_to_hsv(img) # convert the image from BGR to HSV 
     img= cv2.cvtColor(img, cv2.COLOR_BGR2HSV) # Convert the image from BGR to HSV
+    print("------------------------------------------------------------------------------------------------")
     Apply_blur(img , Kernel_size) # apply blur to the image 
     binary_mask = threshold(img , lo , hi) # apply threshold to the image
     centroids = detect_contours(binary_mask) # detect the contours of the object in the image
